@@ -1,8 +1,67 @@
+class << java.swing
+  def container_class_names
+    @container_class_names ||= []
+  end
+  
+  def container_class_names=(*class_names)
+    @container_class_names = class_names
+  end
+  
+  def register_as_container(*class_names)
+    self.container_class_names.concat(class_names)
+  end
+  
+  def add_component_if_container_exist(component, &block)
+    @container ||= nil
+    @container.send(@action, component) if @container
+  end
+  
+  def add_new_component_to(container, action = :add, block_argument = nil, &block)
+    former_container = @container
+    former_action = @action
+    @container = container
+    @action = action
+    begin
+      yield(block_argument || container)
+    ensure
+      @container = former_container
+      @action = former_action
+    end
+  end
+end
+
+
+java.swing.register_as_container(
+  'javax.swing.JApplet',
+  'javax.swing.JFrame',
+  'javax.swing.JPanel',
+  'javax.swing.JScrollPane',
+  'javax.swing.JSplitPane',
+  'javax.swing.JWindow'
+  )
+
+JavaUtilities.extend_proxy('javax.swing.JComponent') do
+  def set_preferred_size_with_rubeus(*args)
+    values = args
+    if args.length == 1
+      if args.first.is_a?(java.awt.Dimension)
+        return set_preferred_size_without_rubeus(*args)
+      else
+        values = args.first.to_s.split("x", 2)
+      end
+    end
+    set_preferred_size_without_rubeus(java.awt.Dimension.new(*values.map{|s|s.to_i}))
+  end
+  
+  alias_method :set_preferred_size_without_rubeus, :set_preferred_size
+  alias_method :set_preferred_size, :set_preferred_size_with_rubeus
+end
+
+
 JavaUtilities.extend_proxy('java.awt.Component') do
   def self.new_with_nestable(*args, &block)
     object = self.new_without_nestable(*args)
-    @@container ||= nil
-    @@container.add(object) if @@container
+    java.swing.add_component_if_container_exist(object)
     return object unless block_given?
     initial_nest(object, &block)
     return object
@@ -13,12 +72,30 @@ JavaUtilities.extend_proxy('java.awt.Component') do
     alias :new :new_with_nestable
   end
   
+  def self.constianer?
+    java.swing.container_class_names.include?(self.java_class.name)
+  end
+  
+  def self.perform_as_container
+    @as_container = true
+  end
+  
+  def self.perform_as_containee
+    @as_container = false
+  end
+  
   def self.initial_nest(object, &block)
-    if object.respond_to?(:listen)
+    if self.constianer?
+      self.add_new_component_to(object, &block)
+    elsif object.respond_to?(:listen)
       object.listen(*self.default_event_type, &block)
     else
-      raise "#{self.name} doesn't support initial_nest"
+      raise "#{self.java_class.name} doesn't support initial_nest"
     end
+  end
+
+  def self.add_new_component_to(object, &block)
+    java.swing.add_new_component_to(object, &block)
   end
   
   def self.default_event_type
@@ -71,7 +148,46 @@ JavaUtilities.extend_proxy('java.awt.Component') do
   
   NULL_METHOD = Proc.new{}
   
+  private
+  def build_hash_comparision(options, option_key, method, inverse, comparision_options = nil)
+    comparision_options ||= options[option_key]
+    return nil unless comparision_options
+    "#{option_key.inspect} option must be a hash" unless comparision_options.is_a?(Hash)
+    Proc.new do |event|
+      matched = comparision_options.send(method){|key, value| event.send(key) == value}
+      inverse ? !matched : matched
+    end
+  end
+  
+  def build_listener_filters(options)
+    filters = []
+    [:if, :unless].each do |condition|
+      [:any, :all].each do |joiner|
+        filters << build_hash_comparision(options, 
+          "#{condition.to_s}_#{joiner.to_s}".to_sym, 
+          "#{joiner.to_s}?", condition == :unless)
+      end
+    end
+    if filters.empty?
+      filters << build_hash_comparision(options, :if, :all?, false) if options[:if]
+      filters << build_hash_comparision(options, :unless, :all?, true) if options[:unless]
+    end
+    unless filters.empty? and options.empty?
+      filters << build_hash_comparision(nil, :if, :all?, false, options)
+    end
+    filters.compact!
+    filters
+  end
+  
+  public
   def listen(event_type, *methods, &block)
+    options = methods.last.is_a?(Hash) ? methods.pop : {}
+    filters = build_listener_filters(options)
+    listener_block = filters.empty? ? block :
+      Proc.new do |event|
+        block.call(event) if filters.all?{|filter| filter.call(event)}
+      end
+    
     listener_interface = listener_interface(event_type)
     lister_methods = listener_interface.declared_instance_methods.map{|method| method.name}
     handling_methods = methods.empty? ?
@@ -80,7 +196,7 @@ JavaUtilities.extend_proxy('java.awt.Component') do
     mod = Module.new do
       lister_methods.each do |listener_method|
         if handling_methods.include?(listener_method) 
-          define_method(listener_method){|*args| block.call(*args)}
+          define_method(listener_method){|*args| listener_block.call(*args)}
         else
           define_method(listener_method, &NULL_METHOD)
         end
@@ -125,36 +241,34 @@ JavaUtilities.extend_proxy('java.awt.Component') do
   end
 end
 
-
-container_swing_classes = [
-  'javax.swing.JApplet',
-  'javax.swing.JDesktopPane',
-  'javax.swing.JFrame',
-  'javax.swing.JLayeredPane',
-  'javax.swing.JPanel',
-  'javax.swing.JWindow'
-]
-container_swing_classes.each do |container_swing_class|
-  JavaUtilities.extend_proxy(container_swing_class) do
-    def self.initial_nest(object, &block)
-      former_container = @@container
-      @@container = object
-      begin
-        yield(object)
-      ensure
-        @@container = former_container
-      end
-    end
-  end
-end
-
-
-
 JavaUtilities.extend_proxy("javax.swing.JTextField") do
   def self.default_event_type
     return :key, :pressed
   end
 end
+
+JavaUtilities.extend_proxy('javax.swing.JScrollPane') do
+  def self.add_new_component_to(object, &block)
+    java.swing.add_new_component_to(object.viewport, :set_view, object, &block)
+  end
+end
+
+JavaUtilities.extend_proxy('javax.swing.JSplitPane') do
+  def self.add_new_component_to(object, &block)
+    java.swing.add_new_component_to(object, :append_component, &block)
+  end
+  
+  def append_component(component)
+    append_method =
+      (self.orientation == javax.swing.JSplitPane::VERTICAL_SPLIT) ?
+        (top_component ? :set_bottom_component : :set_top_component) :
+        (left_component ? :set_right_component : :set_left_component)
+    send(append_method, component)
+  end
+  
+end
+
+
 
 =begin
 import "javax.swing.JFrame"
@@ -173,9 +287,7 @@ frame.event_methods(:key, :keyTyped)
 frame.event_methods(:key, "key_typed")
 frame.event_methods(:key, "key_Typed")
 
-frame.events.each do |event|
-  puts "#{event} => #{frame.event_methods(event).inspect}"
-end
+frame.events.each
 
 frame.visible = true
 

@@ -26,14 +26,12 @@ JFrame.new("Rubeus Swing Example 01") do |frame|
           @text_field.text = ''
         end
       end
-=begin
       # 以下のように書くこともできますです
-      @text_field = JTextField.new
-      @text_field.listen(:key, :key_pressed, :key_code => 10) do |event|
-        @textpane.text += @text_field.text + "\n"
-        @text_field.text = ''
-      end
-=end
+      # @text_field = JTextField.new
+      # @text_field.listen(:key, :key_pressed, :key_code => 10) do |event|
+      #   @textpane.text += @text_field.text + "\n"
+      #   @text_field.text = ''
+      # end
       JButton.new("append") do
         @textpane.text += @text_field.text
         @text_field.text = ''
@@ -44,7 +42,6 @@ JFrame.new("Rubeus Swing Example 01") do |frame|
       @textpane = JTextPane.new
     end
   end
-
   frame.set_size(400, 300)
   frame.default_close_operation = JFrame::EXIT_ON_CLOSE
   frame.visible = true

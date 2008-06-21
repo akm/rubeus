@@ -1,5 +1,7 @@
 include Java
 
+require 'rubygems'
+gem "rubeus"
 require "swing_ext"
 
 import 'javax.swing.BoxLayout'

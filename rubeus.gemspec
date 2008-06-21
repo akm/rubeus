@@ -1,6 +1,7 @@
 Gem::Specification.new do |spec|
   spec.name = "rubeus"
   spec.version = "0.0.1"
+  spec.platform = "java"
   spec.summary = "Rubeus provides you an easy access to Java objects from Ruby scripts on JRuby"
   spec.author = "Takeshi Akima"
   spec.email = "rubeus@googlegroups.com"
@@ -11,4 +12,5 @@ Gem::Specification.new do |spec|
   end
   spec.require_path = "lib"
   spec.has_rdoc = false
+  spec.rubyforge_project = "rubybizcommons"
 end

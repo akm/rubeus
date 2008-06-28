@@ -1,11 +1,7 @@
 include Java
 
 require 'rubygems'
-begin
-  gem "rubeus"
-rescue Gem::LoadError
-  $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "lib")
-end
+gem "rubeus"
 require "rubeus"
 
 Rubeus::Swing.irb

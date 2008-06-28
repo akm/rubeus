@@ -55,11 +55,11 @@ module Rubeus::Swing
       end
 
       def perform_as_container
-        @as_container = true
+        Context.container_class_names << self.java_class.name
       end
 
       def perform_as_containee
-        @as_container = false
+        Context.container_class_names.delete(self.java_class.name)
       end
 
       def process_block_for_new(object, &block)

@@ -1,4 +1,6 @@
 JavaUtilities.extend_proxy('javax.swing.JSplitPane') do
+  perform_as_container
+
   def self.add_new_component_to(object, &block)
     Rubeus::Swing::Nestable::Context.add_new_component_to(object, :append_component, &block)
   end

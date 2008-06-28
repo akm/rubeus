@@ -1,29 +1,23 @@
-default_required = %w(nestable event j_component)
+default_required = %w(nestable event)
 default_required.each{|path| require "rubeus/swing/#{path}"}
 
 module Rubeus
   module Swing
-    def self.register_as_container(*args, &block)
-      Rubeus::Swing::Nestable::Context.register_as_container(*args, &block)
-    end
-    
-    def self.irb
-      Object.send(:extend, self)
-    end
-    
     def const_missing(java_class_name)
       Rubeus::Swing.const_get(java_class_name)
     end
 
     def self.const_missing(java_class_name)
-      attach_component(java_class_name)
-    rescue
-      super
+      attach_component(java_class_name) rescue super
     end
     
     def self.attach_component(java_class_name)
-      full_java_name = "javax.swing.#{java_class_name}"
-      self.const_set(java_class_name, instance_eval(full_java_name))
+      self.const_set(java_class_name, 
+        instance_eval("javax.swing.#{java_class_name}"))
+    end
+
+    def self.irb
+      Object.send(:extend, self)
     end
   end
 end
@@ -40,30 +34,12 @@ Dir.glob("#{swing_path}/*.rb") do |file|
 end
 
 
-Rubeus::Swing.register_as_container(
-  'javax.swing.JApplet',
-  'javax.swing.JFrame',
-  'javax.swing.JPanel',
-  'javax.swing.JScrollPane',
-  'javax.swing.JSplitPane',
-  'javax.swing.JWindow'
-  )
-
 JavaUtilities.extend_proxy('java.awt.Component') do
   include Rubeus::Swing::Nestable
   include Rubeus::Swing::Event
 end
 
-JavaUtilities.extend_proxy('javax.swing.JComponent') do
-  include Rubeus::Swing::JComponent
-end
-
-
-
-
-
-
-
+Rubeus::Swing::JComponent #ここでロードして、予め機能を有効にしています。
 
 =begin
 import "javax.swing.JFrame"

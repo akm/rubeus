@@ -11,15 +11,11 @@ module Rubeus
 end
 
 require "rubeus/swing/extensions"
-require "rubeus/swing/nestable"
-require "rubeus/swing/event"
 
-JavaUtilities.extend_proxy('java.awt.Component') do
-  include Rubeus::Swing::Nestable
-  include Rubeus::Swing::Event
-end
+require "rubeus/awt/attributes"
+require "rubeus/awt/nestable"
+require "rubeus/awt/event"
 
-Rubeus::Swing.depend_on('JComponent') #ここでロードして、予め機能を有効にしています。
 
 =begin
 import "javax.swing.JFrame"

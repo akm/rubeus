@@ -1,4 +1,4 @@
-module Rubeus::Swing
+module Rubeus::Awt
   module Nestable
     def self.included(klass)
       klass.extend(ClassMethods)
@@ -37,6 +37,10 @@ module Rubeus::Swing
           @container = former_container
           @action = former_action
         end
+      end
+      
+      def self.container
+        @container
       end
     end
     

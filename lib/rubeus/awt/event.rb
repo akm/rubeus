@@ -1,4 +1,4 @@
-module Rubeus::Swing
+module Rubeus::Awt
   module Event
     def self.included(klass)
       klass.extend(ClassMethods)

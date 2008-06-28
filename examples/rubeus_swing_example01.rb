@@ -13,10 +13,10 @@ Rubeus::Swing.irb
 # JFrameなどのコンテナのnewに渡されたブロックの中でnewされたコンポーネントは
 # 自動的にaddされます。
 JFrame.new("Rubeus Swing Example 01") do |frame|
-  frame.layout =  BoxLayout.new(frame.content_pane, BoxLayout::Y_AXIS)
+  frame.layout = BoxLayout.new(:Y_AXIS)
   JSplitPane.new(JSplitPane::VERTICAL_SPLIT) do
     JPanel.new do |panel|
-      panel.layout = BoxLayout.new(panel, BoxLayout::X_AXIS)
+      panel.layout = BoxLayout.new(:X_AXIS)
       # キーのイベントもメソッドを指定してハンドリングできます。
       # newにブロックを渡すとlisten(:key, :pressed)が実行されます。
       @text_field = JTextField.new do |event|
@@ -36,12 +36,9 @@ JFrame.new("Rubeus Swing Example 01") do |frame|
         @text_field.text = ''
       end
     end
-    JScrollPane.new do |pane|
-      pane.set_preferred_size(400, 250)
+    JScrollPane.new(:preferred_size => [400, 250]) do |pane|
       @textpane = JTextPane.new
     end
   end
-  frame.set_size(400, 300)
-  frame.default_close_operation = JFrame::EXIT_ON_CLOSE
   frame.visible = true
 end

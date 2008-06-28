@@ -1,5 +1,15 @@
 module Rubeus::Swing
   module Event
+    def self.included(klass)
+      klass.extend(ClassMethods)
+    end
+    
+    module ClassMethods
+      def uncapitalize(str)
+        str[0..0].downcase + str[1..-1]
+      end
+    end
+    
     def find_java_method(method_name, &block)
       klass = self.java_class
       while klass
@@ -24,7 +34,7 @@ module Rubeus::Swing
     def event_methods(event_type, *methods)
       listener_interface = listener_interface(event_type)
       listener_interface.declared_instance_methods.map{|method|
-        self.class.underscore(method.name)}
+        method.name.underscore}
     end
 
     NULL_METHOD = Proc.new{}
@@ -83,7 +93,7 @@ module Rubeus::Swing
           end
         end
       end
-      method_name = "add#{self.class.camelize(event_type)}Listener"
+      method_name = "add#{event_type.to_s.camelize}Listener"
       listener = Object.new
       listener.extend(mod)
       send(method_name, listener)
@@ -92,7 +102,7 @@ module Rubeus::Swing
 
     private
     def listener_interface(event_type)
-      java_event_name = self.class.camelize(event_type)
+      java_event_name = event_type.to_s.camelize
       method_name = "add#{java_event_name}Listener"
       java_method = 
         find_java_method(method_name){|m|m.parameter_types.length == 1} || 
@@ -110,13 +120,12 @@ module Rubeus::Swing
       return base_name if java_methods.include?(base_name)
       s = self.class.uncapitalize(base_name)
       return s if java_methods.include?(s)
-      s = self.class.uncapitalize(self.class.camelize(base_name))
+      s = self.class.uncapitalize(base_name.camelize)
       return s if java_methods.include?(s)
-      even_type = self.class.uncapitalize(self.class.camelize(base_event_type))
+      even_type = self.class.uncapitalize(base_event_type.to_s.camelize)
       s = "#{even_type}#{base_name}"
       return s if java_methods.include?(s)
-      camelized = self.class.camelize(base_name)
-      s = "#{even_type}#{camelized}"
+      s = "#{even_type}#{base_name.camelize}"
       return s if java_methods.include?(s)
       return nil
     end

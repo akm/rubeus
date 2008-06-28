@@ -13,5 +13,3 @@ JavaUtilities.extend_proxy('javax.swing.JSplitPane') do
     send(append_method, component)
   end
 end
-
-Rubeus::Swing.attach_component('JSplitPane')

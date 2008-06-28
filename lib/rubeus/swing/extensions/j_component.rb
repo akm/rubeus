@@ -14,5 +14,3 @@ JavaUtilities.extend_proxy('javax.swing.JComponent') do
   alias_method :set_preferred_size_without_rubeus, :set_preferred_size
   alias_method :set_preferred_size, :set_preferred_size_with_rubeus
 end
-
-Rubeus::Swing.attach_component('JComponent')

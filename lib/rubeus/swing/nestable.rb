@@ -79,23 +79,6 @@ module Rubeus::Swing
       def default_event_type
         :action
       end
-
-      def camelize(str)
-        parts = str.to_s.split('_')
-        parts.map{|part| part[0..0].upcase + part[1..-1].downcase}.join
-      end
-
-      def underscore(camel_cased_word)
-        camel_cased_word.to_s.gsub(/::/, '/').
-          gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
-          gsub(/([a-z\d])([A-Z])/,'\1_\2').
-          tr("-", "_").
-          downcase
-      end
-
-      def uncapitalize(str)
-        str[0..0].downcase + str[1..-1]
-      end
     end
   end
 end

@@ -7,16 +7,8 @@ rescue Gem::LoadError
   $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "lib")
 end
 require "rubeus"
-require "rubeus/swing"
 
-import 'javax.swing.BoxLayout'
-import 'javax.swing.JButton'
-import 'javax.swing.JFrame'
-import 'javax.swing.JPanel'
-import 'javax.swing.JScrollPane'
-import 'javax.swing.JTextField'
-import 'javax.swing.JTextPane'
-import 'javax.swing.JSplitPane'
+Rubeus::Swing.irb
 
 # JFrameなどのコンテナのnewに渡されたブロックの中でnewされたコンポーネントは
 # 自動的にaddされます。

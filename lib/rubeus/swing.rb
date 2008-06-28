@@ -1,14 +1,44 @@
-require "rubeus/swing/j_component"
-require "rubeus/swing/nestable"
-require "rubeus/swing/event"
+default_required = %w(nestable event j_component)
+default_required.each{|path| require "rubeus/swing/#{path}"}
 
 module Rubeus
   module Swing
     def self.register_as_container(*args, &block)
       Rubeus::Swing::Nestable::Context.register_as_container(*args, &block)
     end
+    
+    def self.irb
+      Object.send(:extend, self)
+    end
+    
+    def const_missing(java_class_name)
+      Rubeus::Swing.const_get(java_class_name)
+    end
+
+    def self.const_missing(java_class_name)
+      attach_component(java_class_name)
+    rescue
+      super
+    end
+    
+    def self.attach_component(java_class_name)
+      full_java_name = "javax.swing.#{java_class_name}"
+      self.const_set(java_class_name, instance_eval(full_java_name))
+    end
   end
 end
+
+base_path = File.dirname(File.dirname(__FILE__))
+swing_path = File.join(File.dirname(__FILE__), "swing")
+
+Dir.glob("#{swing_path}/*.rb") do |file|
+  unless default_required.any?{|path| file.include?(path)}
+    rel_path = file.gsub("#{base_path}/", '')
+    base_name = File.basename(rel_path, '.*')
+    Rubeus::Swing.autoload(base_name.camelize, rel_path)
+  end
+end
+
 
 Rubeus::Swing.register_as_container(
   'javax.swing.JApplet',
@@ -19,43 +49,19 @@ Rubeus::Swing.register_as_container(
   'javax.swing.JWindow'
   )
 
+JavaUtilities.extend_proxy('java.awt.Component') do
+  include Rubeus::Swing::Nestable
+  include Rubeus::Swing::Event
+end
 
 JavaUtilities.extend_proxy('javax.swing.JComponent') do
   include Rubeus::Swing::JComponent
 end
 
 
-JavaUtilities.extend_proxy('java.awt.Component') do
-  include Rubeus::Swing::Nestable
-  include Rubeus::Swing::Event
-end
 
-JavaUtilities.extend_proxy("javax.swing.JTextField") do
-  def self.default_event_type
-    return :key, :pressed
-  end
-end
 
-JavaUtilities.extend_proxy('javax.swing.JScrollPane') do
-  def self.add_new_component_to(object, &block)
-    Rubeus::Swing::Nestable::Context.add_new_component_to(object.viewport, :set_view, object, &block)
-  end
-end
 
-JavaUtilities.extend_proxy('javax.swing.JSplitPane') do
-  def self.add_new_component_to(object, &block)
-    Rubeus::Swing::Nestable::Context.add_new_component_to(object, :append_component, &block)
-  end
-  
-  def append_component(component)
-    append_method =
-      (self.orientation == javax.swing.JSplitPane::VERTICAL_SPLIT) ?
-        (top_component ? :set_bottom_component : :set_top_component) :
-        (left_component ? :set_right_component : :set_left_component)
-    send(append_method, component)
-  end
-  
-end
 
 
 

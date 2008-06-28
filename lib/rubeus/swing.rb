@@ -16,6 +16,10 @@ module Rubeus
         instance_eval("javax.swing.#{java_class_name}"))
     end
 
+    def self.depend_on(java_class_name)
+      self.const_get(java_class_name)
+    end
+
     def self.irb
       Object.send(:extend, self)
     end

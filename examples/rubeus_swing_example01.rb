@@ -1,8 +1,13 @@
 include Java
 
 require 'rubygems'
-gem "rubeus"
-require "swing_ext"
+begin
+  gem "rubeus"
+rescue Gem::LoadError
+  $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "lib")
+end
+require "rubeus"
+require "rubeus/swing"
 
 import 'javax.swing.BoxLayout'
 import 'javax.swing.JButton'

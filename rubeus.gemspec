@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name = "rubeus"
-  spec.version = "0.0.1"
+  spec.version = "0.0.2"
   spec.platform = "java"
   spec.summary = "Rubeus provides you an easy access to Java objects from Ruby scripts on JRuby"
   spec.author = "Takeshi Akima"

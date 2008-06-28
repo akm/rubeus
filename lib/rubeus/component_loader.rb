@@ -34,7 +34,24 @@ module Rubeus
       object.extend(mod)
     end
     
+    def autolodings
+      @autolodings ||= {}
+    end
+    
+    def autoload(const_name, feature = nil)
+      autolodings[const_name.to_s] = feature ||"#{self.name}::#{java_class_name.to_s}".underscore
+    end
+    
+    def autoload?(const_name)
+      autolodings[const_name.to_s]
+    end
+    
     def const_missing(java_class_name)
+      if autoload?(java_class_name)
+        feature = autolodings.delete(java_class_name.to_s) 
+        require(feature)
+        return const_get(java_class_name)
+      end
       if java_class_name.to_s == @ruby_module_holder_name.to_s
         raise NameError, java_class_name
       end
@@ -50,14 +67,24 @@ module Rubeus
       else
         begin
           require(File.join(@ruby_module_path, java_class_name.to_s.underscore))
-        rescue LoadError
+        rescue LoadError => e
+          puts "warning: #{e}"
         end
         java_fqn = to_java_fqn(java_class_name)
-        extension = self.ruby_module_holder.const_get(java_class_name) rescue nil
-        JavaUtilities.extend_proxy(java_fqn) do
-          include extension if extension
+        extension = nil
+        begin
+          extension = self.ruby_module_holder.const_get(java_class_name)
+        rescue
+          puts "warning: #{$!.inspect}"
         end
-        self.const_set(java_class_name, instance_eval(java_fqn))
+        if extension
+          JavaUtilities.extend_proxy(java_fqn) do
+            include extension 
+          end
+        end
+        result = instance_eval(java_fqn)
+        self.const_set(java_class_name, result)
+        result
       end
     rescue
       puts $!
@@ -69,8 +96,8 @@ module Rubeus
       "#{java_package}.#{java_class_name}"
     end
     
-    def depend_on(java_class_name)
-      self.const_get(java_class_name)
+    def depend_on(*java_class_names)
+      java_class_names.each{|java_class_name| self.const_get(java_class_name)}
     end
   end
 end

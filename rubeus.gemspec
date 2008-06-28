@@ -8,9 +8,10 @@ Gem::Specification.new do |spec|
   spec.homepage = "http://code.google.com/p/rubeus/"
   candidates = Dir.glob("{lib, examples}/**/*")
   spec.files = candidates.delete_if do |item|
-    item.include?(".svn") || item.include?("rdoc")
+    (/\..*~$/ =~ item) || item.include?(".svn") || item.include?("rdoc")
   end
   spec.require_path = "lib"
   spec.has_rdoc = false
   spec.rubyforge_project = "rubybizcommons"
+  spec.add_dependency("activesupport", ">= 2.0.2")
 end

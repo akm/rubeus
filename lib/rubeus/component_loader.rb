@@ -68,14 +68,14 @@ module Rubeus
         begin
           require(File.join(@ruby_module_path, java_class_name.to_s.underscore))
         rescue LoadError => e
-          puts "warning: #{e}"
+          # puts "warning: #{e}"
         end
         java_fqn = to_java_fqn(java_class_name)
         extension = nil
         begin
           extension = self.ruby_module_holder.const_get(java_class_name)
         rescue
-          puts "warning: #{$!.inspect}"
+          # puts "warning: #{$!.inspect}"
         end
         if extension
           JavaUtilities.extend_proxy(java_fqn) do

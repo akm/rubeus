@@ -37,7 +37,7 @@ module Example01
           @text_field.text = ''
         end
       end
-      JScrollPane.new(:preferred_size => [400, 100]) do |pane|
+      JScrollPane.new(:preferred_size => [400, 250]) do |pane|
         @textpane = JTextPane.new
       end
     end

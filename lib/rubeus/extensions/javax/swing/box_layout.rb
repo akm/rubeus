@@ -1,4 +1,4 @@
-module Rubeus::Swing::Extensions
+module Rubeus::Extensions::Javax::Swing
   module BoxLayout
     def self.included(base)
       base.extend(ClassMethods)

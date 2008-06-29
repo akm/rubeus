@@ -1,6 +1,6 @@
 Rubeus::Awt.depend_on("Container")
 
-module Rubeus::Swing::Extensions
+module Rubeus::Extensions::Javax::Swing
   module JComponent
     
     def self.included(base)

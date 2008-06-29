@@ -1,20 +1,20 @@
 require "rubeus/component_loader"
+require "rubeus/awt"
 
 module Rubeus
-  extensions_path = File.join(File.dirname(__FILE__), "swing", "extensions")
-  Swing = ComponentLoader.new("javax.swing", extensions_path) do
+  Swing = ComponentLoader.new("javax.swing") do
+    class_to_package.update(
+      # $JAVA_HOME/lib/classlistにないものリスト
+      'JTextPane' => 'javax.swing',
+      'RTFEditorKit' => 'javax.swing.text.rtf'
+      )
+    class_to_package['DefaultStyledDocument'] ||= 'javax.swing.text' # Windowsにない
     
     def self.irb
       Object.send(:extend, self)
     end
   end
 end
-
-require "rubeus/swing/extensions"
-
-require "rubeus/awt/attributes"
-require "rubeus/awt/nestable"
-require "rubeus/awt/event"
 
 
 =begin

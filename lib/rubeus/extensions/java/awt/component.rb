@@ -1,6 +1,6 @@
 Rubeus::Awt.depend_on("Dimension")
 
-module Rubeus::Awt::Extensions
+module Rubeus::Extensions::Java::Awt
   module Component
     def self.included(base)
       base.module_eval do

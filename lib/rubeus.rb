@@ -5,6 +5,7 @@ require "active_support/core_ext/string"
 
 module Rubeus
   VERSION = "0.0.2"
+  autoload :Extensions, "rubeus/extensions"
   autoload :Awt, "rubeus/awt"
   autoload :Swing, "rubeus/swing"
 end

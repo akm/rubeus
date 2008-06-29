@@ -1,7 +1,7 @@
 Rubeus::Awt.depend_on('Container', 'Window', 'Frame')
 Rubeus::Swing.depend_on('JPanel')
 
-module Rubeus::Swing::Extensions
+module Rubeus::Extensions::Javax::Swing
   module JFrame
     def self.included(base)
       base.perform_as_container

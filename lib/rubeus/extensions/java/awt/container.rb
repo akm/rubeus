@@ -1,6 +1,6 @@
 Rubeus::Awt.depend_on("Component")
 
-module Rubeus::Awt::Extensions
+module Rubeus::Extensions::Java::Awt
   module Container
   end
 end

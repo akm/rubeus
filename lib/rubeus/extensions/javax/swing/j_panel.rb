@@ -1,6 +1,6 @@
 Rubeus::Swing.depend_on("JComponent")
 
-module Rubeus::Swing::Extensions
+module Rubeus::Extensions::Javax::Swing
   module JPanel
     def self.included(base)
       base.perform_as_container

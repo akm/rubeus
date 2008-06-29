@@ -1,4 +1,4 @@
-module Rubeus::Awt::Extensions
+module Rubeus::Extensions::Java::Awt
   module Dimension
     def self.included(base)
       base.extend ClassMethods
@@ -21,4 +21,3 @@ module Rubeus::Awt::Extensions
     end
   end
 end
-

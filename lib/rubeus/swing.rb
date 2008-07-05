@@ -11,10 +11,12 @@ module Rubeus
     class_to_package['DefaultStyledDocument'] ||= 'javax.swing.text' # Windowsにない
     
     def self.irb
-      Object.send(:extend, self)
+      Rubeus::Awt.extend_with
+      self.extend_with
     end
   end
 end
+Rubeus::Swing.depend_on('JComponent')
 
 
 =begin

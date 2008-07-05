@@ -8,4 +8,5 @@ module Rubeus
   autoload :Extensions, "rubeus/extensions"
   autoload :Awt, "rubeus/awt"
   autoload :Swing, "rubeus/swing"
+  # autoload :Jdbc, "rubeus/jdbc"
 end

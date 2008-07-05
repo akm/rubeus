@@ -38,29 +38,35 @@ module Rubeus
           [@class_to_package[class_name], package] : package
       end
     end
+    
+    def included(mod)
+      mod.extend(self)
+    end
    
     def extended(object)
-      mod = Module.new do
-        def const_missing(java_class_name)
-          @loader.const_get(java_class_name)
+      class_name_for_method = self.name.underscore.gsub('/', '_')
+      const_missing_with = "const_missing_with_#{class_name_for_method}"
+      const_missing_without = "const_missing_without_#{class_name_for_method}"
+      return if object.singleton_methods.include?(const_missing_with)
+      loader_name = "@loader_#{class_name_for_method}".to_sym
+      mod = Module.new 
+      mod.send(:define_method, const_missing_with) do |const_name|
+        begin
+          instance_variable_get(loader_name).const_get(const_name)
         rescue
-          super
+          send(const_missing_without, const_name)
         end
       end
-      object.instance_variable_set("@loader", self)
       object.extend(mod)
+      object.instance_variable_set(loader_name, self)
+      object.instance_eval <<-EOS
+        alias :#{const_missing_without} :const_missing
+        alias :const_missing :#{const_missing_with}
+      EOS
     end
-    
-    def autolodings
-      @autolodings ||= {}
-    end
-    
-    def autoload(const_name, feature = nil)
-      autolodings[const_name.to_s] = feature ||"#{self.name}::#{java_class_name.to_s}".underscore
-    end
-    
-    def autoload?(const_name)
-      autolodings[const_name.to_s]
+
+    def extend_with(mod = Object)
+      mod.send(:extend, self)
     end
     
     def const_missing(java_class_name)
@@ -90,6 +96,18 @@ module Rubeus
       super
     end
 
+    def autolodings
+      @autolodings ||= {}
+    end
+    
+    def autoload(const_name, feature = nil)
+      autolodings[const_name.to_s] = feature ||"#{self.name}::#{java_class_name.to_s}".underscore
+    end
+    
+    def autoload?(const_name)
+      autolodings[const_name.to_s]
+    end
+    
     def depend_on(*java_class_names)
       java_class_names.each{|java_class_name| self.const_get(java_class_name)}
     end

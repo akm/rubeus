@@ -19,13 +19,16 @@ module Rubeus
     attr_reader :class_to_package
 
     def initialize(java_package, &block)
-      @java_package = java_package
-      build_class_to_package_table
+      build_class_to_package_table(java_package)
+      java_package = JavaUtilities.get_package_module_dot_format(java_package)
+      class << java_package
+        include Rubeus::JavaPackage
+      end
       super(&block)
     end
     
-    def build_class_to_package_table
-      class_names = ::Rubeus::ComponentLoader.class_names(@java_package)
+    def build_class_to_package_table(java_package)
+      class_names = ::Rubeus::ComponentLoader.class_names(java_package)
       @class_to_package = {}
       class_names.each do |fqn|
         parts = fqn.split('.')
@@ -81,12 +84,6 @@ module Rubeus
         raise NameError, "cannot specified package name for #{java_class_name}: #{package.join(', ')}"
       end
       java_fqn = package.empty? ? java_class_name.to_s : "#{package}.#{java_class_name.to_s}"
-      extension = extension_for(java_fqn)
-      if extension
-        JavaUtilities.extend_proxy(java_fqn) do
-          include extension
-        end
-      end
       result = instance_eval(java_fqn)
       self.const_set(java_class_name, result)
       result
@@ -112,31 +109,38 @@ module Rubeus
       java_class_names.each{|java_class_name| self.const_get(java_class_name)}
     end
 
-    def extension_path_for(java_fqn_or_parts)
-      parts = java_fqn_or_parts.is_a?(Array) ? java_fqn_or_parts : java_fqn_or_parts.split('.')
-      "rubeus/extensions/%s" % parts.map{|part|part.underscore}.join('/')
+  end
+
+  module JavaPackage
+    def self.included(object)
+      raise "JavaPackage must be extended by a Module" unless object.is_a?(Module)
+      object.module_eval do
+        alias :method_missing_without_rubeus :method_missing
+        alias :method_missing :method_missing_with_rubeus
+        alias :const_missing_without_rubeus :const_missing
+        alias :const_missing :const_missing_with_rubeus
+      end
     end
 
-    def extension_class_name_for(java_fqn_or_parts)
-      parts = java_fqn_or_parts.is_a?(Array) ? java_fqn_or_parts : java_fqn_or_parts.split('.')
-      "Rubeus::Extensions::%s" % parts.map{|part|part.camelize}.join('::')
+    def method_missing_with_rubeus(method, *args)
+      java_fqn = "#{@package_name}#{method.to_s}"
+      extension = Rubeus::Extensions.find_for(java_fqn)
+      if extension
+        JavaUtilities.extend_proxy(java_fqn) do
+          include extension
+        end
+      end
+      result = method_missing_without_rubeus(method, *args)
+      class << result
+        include ::Rubeus::JavaPackage
+      end
+      result
     end
 
-    def extension_for(java_fqn)
-      parts = java_fqn.split('.')
-      extension_path = extension_path_for(parts)
-      begin
-        require(extension_path)
-      rescue LoadError => e
-        # puts "warning: #{e}"
-        return nil
-      end
-      begin
-        instance_eval(extension_class_name_for(parts))
-      rescue NameError => e
-        # puts "warning: #{e}"
-        return nil
-      end
+    def const_missing_with_rubeus(const_name)
+      result = const_missing_without_rubeus(const_name)
+      puts("#{self.name}.const_missing(#{const_name.inspect}) => #{result.inspect}")
+      result
     end
   end
 end

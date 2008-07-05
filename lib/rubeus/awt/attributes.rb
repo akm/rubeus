@@ -18,6 +18,7 @@ module Rubeus::Awt
         else
           attributes.each do |attr, value|
             begin
+              value = (self.const_get(value) rescue value) if value.is_a?(Symbol)
               result.send("#{attr.to_s}=", value)
             rescue
               raise ArgumentError, "Failed setting #{value.inspect} to #{attr.inspect} cause of #{$!.to_s}"

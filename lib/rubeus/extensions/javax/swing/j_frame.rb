@@ -7,7 +7,7 @@ module Rubeus::Extensions::Javax::Swing
       base.perform_as_container
       base.default_attributes = {
         :size => [400, 300],
-        :default_close_operation => javax.swing.JFrame::EXIT_ON_CLOSE
+        :default_close_operation => :EXIT_ON_CLOSE
       }
       if ENV_JAVA["java.specification.version"] == "1.6"
         base.module_eval do

@@ -1,0 +1,22 @@
+ねこび〜ん by カネウチカズコ is licensed under a Creative Commons 表示-継承 2.1 日本 License.
+
+カネウチカズコ
+http://blog.cgfm.jp/mutsuki/
+
+Creative Commons 表示-継承 2.1 日本 License
+http://creativecommons.org/licenses/by-sa/2.1/jp/
+
+
+
+クレジット表示について
+Creative Commons 表示-継承 2.1 日本 License に従いますが、下記に該当する場合にはクレジット表示を緩和してご利用いただくことができます。
+
+例外事項:
+
+    * netbeans.org, ja.netbeans.org, wiki.netbeans.org などの NetBeans サイトではクレジット表記なしで使用することができます。
+
+    * 個人で使用する場合で、画像を変更・編集なしで使用する場合、 クレジット表示なしで使用することができます。
+      (ここで言う変更、編集には画像の拡大・縮小・背景画像変更は含みません)
+
+      クレジット表示をされない場合、余裕があればねこび〜んのページ (http://ja.netbeans.org/nekobean)へのリンクを追加してください。
+                                   

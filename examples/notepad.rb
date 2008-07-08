@@ -1,7 +1,6 @@
 include Java
 
 require 'rubygems'
-gem 'rubeus'
 require 'rubeus'
 
 Rubeus::Swing.irb

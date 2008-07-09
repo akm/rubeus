@@ -7,9 +7,8 @@
 
 include Java
 
-$LOAD_PATH << File.join(File.dirname(__FILE__), '..', '..', 'lib')
-#require 'rubygems'
-#gem 'rubeus'
+# $LOAD_PATH << File.join(File.dirname(__FILE__), '..', '..', 'lib')
+require 'rubygems'
 
 require 'rubeus'
 Rubeus::Swing.irb

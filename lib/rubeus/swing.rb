@@ -6,7 +6,8 @@ module Rubeus
     class_to_package.update(
       # $JAVA_HOME/lib/classlistにないものリスト
       'JTextPane' => 'javax.swing',
-      'RTFEditorKit' => 'javax.swing.text.rtf'
+      'RTFEditorKit' => 'javax.swing.text.rtf',
+      'DefaultTableModel' => 'javax.swing.table'
       )
     class_to_package['DefaultStyledDocument'] ||= 'javax.swing.text' # Windowsにない
     

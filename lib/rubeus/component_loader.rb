@@ -126,8 +126,12 @@ module Rubeus
       java_fqn = "#{@package_name}#{method.to_s}"
       extension = Rubeus::Extensions.find_for(java_fqn)
       if extension
-        JavaUtilities.extend_proxy(java_fqn) do
-          include extension
+        @extension_applied ||= [] 
+        unless @extension_applied.include?(java_fqn)
+          JavaUtilities.extend_proxy(java_fqn) do
+            include extension
+          end
+          @extension_applied << java_fqn
         end
       end
       result = method_missing_without_rubeus(method, *args)

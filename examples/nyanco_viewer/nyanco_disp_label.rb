@@ -25,7 +25,14 @@ class NyancoDispLabel < javax.swing.JLabel
   def drop(e)
     e.accept_drop java.awt.dnd.DnDConstants::ACTION_COPY_OR_MOVE
     java_file_list_flavor = java.awt.datatransfer.DataFlavor.javaFileListFlavor
-    image_path = e.transferable.get_transfer_data(java_file_list_flavor)[0].absolute_path
+    string_flavor = java.awt.datatransfer.DataFlavor.stringFlavor
+    if e.transferable.isDataFlavorSupported(java_file_list_flavor)
+      image_path = e.transferable.get_transfer_data(java_file_list_flavor)[0].absolute_path
+    elsif e.transferable.isDataFlavorSupported(string_flavor)
+      image_path = java.net.URL.new(e.transferable.get_transfer_data(string_flavor))
+    else
+      # Unsupported data
+    end 
     self.icon = javax.swing.ImageIcon.new(image_path)
   end
 end

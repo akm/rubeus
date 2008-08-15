@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 require 'test/unit'
 require 'rubygems'
 require 'rubeus'
@@ -202,5 +201,157 @@ class TestDefaultTableModel < Test::Unit::TestCase
 
 		# assert second row
 		assert_equal("2008-08-13T20:36:00Z", nhk_word_table.model.get_value_at(1, 2))
+	end
+
+	# insert_row
+	def test_insert_row
+		# Initialize JTable and model
+		nhk_word_table = JTable.new
+		nhk_word_table.model = ['ID', 'NHK語']
+
+		# Insert Rows
+		nhk_word_table.model.insert_row(0, [1, "いんさーと"])
+		nhk_word_table.model.insert_row(0, [2, "インサートその2"])
+
+		# assert row count
+		assert_equal(2, nhk_word_table.model.row_count)
+
+		# assert first row
+		assert_equal(2, nhk_word_table.model.get_value_at(0, 0))
+		assert_equal("インサートその2", nhk_word_table.model.get_value_at(0, 1))
+
+		# assert second row
+		assert_equal(1, nhk_word_table.model.get_value_at(1, 0))
+		assert_equal("いんさーと", nhk_word_table.model.get_value_at(1, 1))
+	end
+
+	# add_row
+	def test_add_row
+		# Initialize JTable and model
+		nhk_word_table = JTable.new
+		nhk_word_table.model = ['ID', 'NHK語']
+
+		# Insert Rows
+		nhk_word_table.model.add_row([1, "いんさーと"])
+		nhk_word_table.model.add_row([2, "インサートその2"])
+
+		# assert row count
+		assert_equal(2, nhk_word_table.model.row_count)
+
+		# assert first row
+		assert_equal(1, nhk_word_table.model.get_value_at(0, 0))
+		assert_equal("いんさーと", nhk_word_table.model.get_value_at(0, 1))
+
+		# assert second row
+		assert_equal(2, nhk_word_table.model.get_value_at(1, 0))
+		assert_equal("インサートその2", nhk_word_table.model.get_value_at(1, 1))
+	end
+
+	# new with 2d-Array
+	def test_new_with_2dArray
+		# Initialize JTable and model
+		nhk_word_table = JTable.new
+		nhk_word_table.model = [[1, "1行目"], [2, "2行目"], [3, "3行目"]]
+
+		# assert row count
+		assert_equal(3, nhk_word_table.model.row_count)
+
+		# assert column count
+		assert_equal(2, nhk_word_table.model.column_count)
+
+		# assert rows
+		for i in 1..nhk_word_table.model.row_count
+			assert_equal(i, nhk_word_table.model.get_value_at((i-1), 0))
+			assert_equal("#{i}行目", nhk_word_table.model.get_value_at((i-1), 1))
+		end
+
+		# assert columns
+		for i in 1..nhk_word_table.model.column_count
+			assert_equal(i.to_s, nhk_word_table.model.getColumnName(i-1))
+		end
+	end
+
+	# new with Array
+	def test_new_with_array
+		# Initialize JTable and model
+		nhk_word_table = JTable.new
+		nhk_word_table.model = ["ID", "NHK語"]
+
+		# assert row count
+		assert_equal(0, nhk_word_table.model.row_count)
+
+		# assert column count
+		assert_equal(2, nhk_word_table.model.column_count)
+
+		# assert columns
+		assert_equal("ID", nhk_word_table.model.get_column_name(0))
+		assert_equal("NHK語", nhk_word_table.model.get_column_name(1))
+	end
+
+	# new with Hash
+	def test_new_with_hash_data_column_names
+		# Initialize JTable and model
+		nhk_word_table = JTable.new
+		nhk_word_table.model = {:data => [["1", "ないわ〜"], ["2", "格好いい"]], :column_names => ["ID", "NHK語"]}
+
+		assert_for_normal(nhk_word_table)
+	end
+
+	# new with Hash
+	def test_new_with_hash_rows_columns
+		# Initialize JTable and model
+		nhk_word_table = JTable.new
+		nhk_word_table.model = {:rows => [["1", "ないわ〜"], ["2", "格好いい"]], :columns => ["ID", "NHK語"]}
+
+		assert_for_normal(nhk_word_table)
+	end
+
+	# new with Hash nil rows
+	def test_new_with_hash_nil_rows
+		# Initialize JTable and model
+		nhk_word_table = JTable.new
+
+		assert_raise(ArgumentError) do
+			nhk_word_table.model = {:columns => ["ID", "NHK語"]}
+		end
+	end
+
+	# new with Hash nil cols
+	def test_new_with_hash_nil_cols
+		# Initialize JTable and model
+		nhk_word_table = JTable.new
+
+		assert_raise(ArgumentError) do
+			nhk_word_table.model = {:rows => [["1", "ないわ〜"], ["2", "格好いい"]]}
+		end
+	end
+
+	# new with XML
+	def test_new_with_xml
+		# Initialize JTable and model
+		nhk_word_table = JTable.new
+		nhk_word_table.model = DefaultTableModel.new(@xml, {:row_path => '*/nhk-word', :column_paths => ['id', 'expression']})
+
+		assert_for_normal(nhk_word_table)
+	end
+
+	# new with original constructor
+	def test_new_with_original_constructor
+		# Initialize JTable and model
+		nhk_word_table = JTable.new
+		nhk_word_table.model = DefaultTableModel.new(4, 3)
+
+		# assert row count
+		assert_equal(4, nhk_word_table.model.row_count)
+
+		# assert column count
+		assert_equal(3, nhk_word_table.model.column_count)
+
+		# assert cells
+		for i in 1..nhk_word_table.model.row_count
+			for j in 1..nhk_word_table.model.column_count
+				assert_nil(nhk_word_table.model.get_value_at((i-1), (j-1)))
+			end
+		end
 	end
 end

@@ -1,3 +1,5 @@
+Rubeus::Jdbc.depend_on("ResultSet")
+
 module Rubeus::Extensions::Java::Sql
   module Statement
     include Rubeus::Jdbc::CloseableResource

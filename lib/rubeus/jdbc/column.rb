@@ -9,7 +9,7 @@ module Rubeus::Jdbc
       :column_label       , # String  # 印刷や表示に使用する、指定された列の推奨タイトルを取得します。
       :column_name        , # String  # 指定された列の名前を取得します。
       :column_type        , # int     # 指定された列の SQL 型を取得します。
-      :column_typeName    , # String  # 指定された列のデータベース固有の型名を取得します。
+      :column_type_name   , # String  # 指定された列のデータベース固有の型名を取得します。
       :precision          , # int     # 指定された列の 10 進桁数を取得します。
       :scale              , # int     # 指定された列の小数点以下の桁数を取得します。
       :schema_name        , # String  # 指定された列のテーブルのスキーマを取得します。

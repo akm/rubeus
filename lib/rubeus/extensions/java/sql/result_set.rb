@@ -1,3 +1,5 @@
+Rubeus::Jdbc.depend_on("ResultSetMetaData")
+
 module Rubeus::Extensions::Java::Sql
   module ResultSet
     include Enumerable

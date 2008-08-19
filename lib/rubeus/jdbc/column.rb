@@ -18,7 +18,7 @@ module Rubeus::Jdbc
       :case_sensitive     , # boolean # 列の大文字と小文字が区別されるかどうかを示します。
       :currency           , # boolean # 指定された列がキャッシュの値かどうかを示します。
       :definitely_writable, # boolean # 指定された列の書き込みが必ず成功するかどうかを示します。
-      :nullable           , # int     # 指定された列に NULL をセットできるかどうかを示します。
+      :is_nullable        , # int     # 指定された列に NULL をセットできるかどうかを示します。
       :read_only          , # boolean # 指定された列が絶対的に書き込み可能でないかどうかを示します。
       :searchable         , # boolean # 指定された列を where 節で使用できるかどうかを示します。
       :signed             , # boolean # 指定された列の値が符号付き数値かどうかを示します。

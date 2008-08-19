@@ -18,6 +18,10 @@ module Rubeus::Extensions::Java::Sql
         dest
       end
     end
+
+    def column_index(i)
+      i
+    end
     
     private
     def build_columns

@@ -2,22 +2,29 @@ require 'java'
 require 'rubygems'
 require 'rubeus'
 
-if ENV_JAVA["java.specification.version"] == "1.6"
-  begin
-    require java.lang.System.getenv("JAVA_HOME") + "/db/lib/derby.jar"
-  rescue LoadError
-    # ignore error if not installed JavaDB
-    puts "JavaDB is not installed."
-    puts "Please add derby.jar to your CLASSPATH."
+def setup_derby
+  return if ENV_JAVA['java.class.path'].split(File::PATH_SEPARATOR).any?{|path| /derby[\-\.\d]*\.jar$/ =~ path}
+  if ENV_JAVA["java.specification.version"] == "1.6"
+    begin
+      require File.join(ENV_JAVA['java.home'], 'db', 'lib', 'derby.jar')
+      return
+    rescue LoadError
+      # ignore error if not installed JavaDB
+      # Apple's JDK doesn't include Apache Derby
+    end
   end
+  puts "JavaDB is not installed."
+  puts "Please add derby.jar to your CLASSPATH."
 end
+
+setup_derby
 
 class JdbcExample
   include Rubeus::Jdbc
 
   def initialize
     # Register Driver
-    Java::OrgApacheDerbyJdbc::EmbeddedDriver.new
+    Java::OrgApacheDerbyJdbc::EmbeddedDriver
   end
 
   def test

@@ -41,6 +41,21 @@ class JdbcExample
             print "|", rsNext.getInt("ID"), "|", rsNext.getString("DATA"), "|\n"
           end
         end
+
+        # Query by each_array
+        stmt.query("SELECT * FROM TEST") do |rs|
+          rs.each_array do |rsNext|
+            print "|", rsNext[0], "|", rsNext[1], "|\n"
+          end
+        end
+
+        # Connection#query by each_hash
+        con.query("SELECT * FROM TEST") do |rs|
+          rs.each_hash do |rsNext|
+            print "|", rsNext["ID"], "|", rsNext["DATA"], "|\n"
+          end
+        end
+
       end
     end
   end

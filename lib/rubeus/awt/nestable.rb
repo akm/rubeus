@@ -54,7 +54,7 @@ module Rubeus::Awt
         return object
       end
 
-      def constianer?
+      def container?
         Context.container_class_names.include?(self.java_class.name)
       end
 
@@ -67,7 +67,7 @@ module Rubeus::Awt
       end
 
       def process_block_for_new(object, &block)
-        if self.constianer?
+        if self.container?
           self.add_new_component_to(object, &block)
         elsif object.respond_to?(:listen)
           object.listen(*self.default_event_type, &block)

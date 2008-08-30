@@ -3,7 +3,7 @@
 <nhk-words type = "array">
 	<nhk-word>
 		<id type = "integer">1</id>
-		<expression>ないわ〜</expression>
+		<expression>ないわ～</expression>
 		<created-at type = "datetime">2008-08-13T20:35:00Z</created-at>
 	</nhk-word>
 	<nhk-word>

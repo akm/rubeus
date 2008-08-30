@@ -45,7 +45,7 @@ module Rubeus::Extensions::Javax::Swing::Table
             return new_without_rubeus(data, column_names)
           end
         elsif (args.length == 2) and (args.first.class.name == 'REXML::Document' and args.last.is_a?(Hash)) 
-          result = new_without_rubeus
+          result = new_without_rubeus(vectorize_if_array(args.last[:column_paths]), 0)
           result.load_from_xml(*args)
           return result
         end

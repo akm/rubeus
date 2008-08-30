@@ -154,5 +154,61 @@ class TestEvent < Test::Unit::TestCase
 
     assert_equal(1, @mouse_event_processed_count)
   end
+
+  # test listen with two filters
+  def test_listen_with_two_filters
+    @mouse_event_processed_count = 0
+
+    jf = JFrame.new do |f|
+      # left button double clicked
+      f.listen(:mouse, :mouse_clicked, :click_count => 2, :button => java.awt.event.MouseEvent::BUTTON1) do |mouse_event|
+        assert_equal(java.awt.event.MouseEvent::MOUSE_CLICKED, mouse_event.get_id)
+        assert_equal(100, mouse_event.x)
+        assert_equal(250, mouse_event.y)
+        assert_equal(2, mouse_event.click_count)
+        assert_equal(false, mouse_event.popup_trigger?)
+        assert_equal(java.awt.event.InputEvent::BUTTON1_MASK, mouse_event.get_modifiers)
+        assert_equal(java.awt.event.MouseEvent::BUTTON1, mouse_event.get_button)
+
+        @mouse_event_processed_count = @mouse_event_processed_count + 1
+      end
+    end
+
+    jf.visible = true
+
+    # Send mouse clicked event to JFrame
+    jf.dispatch_event(
+      java.awt.event.MouseEvent.new(
+        jf,
+        java.awt.event.MouseEvent::MOUSE_CLICKED, 
+        java.lang.System.current_time_millis, 
+        java.awt.event.InputEvent::BUTTON1_MASK,
+        100,
+        250,
+        2,
+        false,
+        java.awt.event.MouseEvent::BUTTON1
+      )
+    )
+
+    jf.dispatch_event(
+      java.awt.event.MouseEvent.new(
+        jf,
+        java.awt.event.MouseEvent::MOUSE_CLICKED, 
+        java.lang.System.current_time_millis, 
+        java.awt.event.InputEvent::BUTTON2_MASK,
+        100,
+        250,
+        2,
+        false,
+        java.awt.event.MouseEvent::BUTTON2
+      )
+    )
+
+    jf.dispose
+    jf.visible = false
+
+    assert_equal(1, @mouse_event_processed_count)
+  end
 end
 

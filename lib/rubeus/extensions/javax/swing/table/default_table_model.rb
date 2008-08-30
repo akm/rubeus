@@ -83,7 +83,12 @@ module Rubeus::Extensions::Javax::Swing::Table
       end
       self.row_count = 0
       rexml_doc.elements.each(row_path) do |row|
-        add_row(col_paths.map{|col_path| row.elements[col_path].text})
+        values = col_paths.map do |col_path| 
+          element = row.elements[col_path]
+          raise ArgumentError, "column  '#{col_path}' not found." unless element
+          element.text
+        end
+        add_row(values)
       end
     end
   end

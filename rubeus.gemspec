@@ -1,9 +1,11 @@
 require 'rake'
 require(File.join(File.dirname(__FILE__), 'lib', 'rubeus'))
 
+puts "Rubeus::VERSION => #{Rubeus::VERSION}"
+
 Gem::Specification.new do |spec|
   spec.name = "rubeus"
-  spec.version = Rubeus::VERSION
+  spec.version = '0.0.6' # Rubeus::VERSION
   spec.platform = "java"
   spec.summary = "Rubeus provides you an easy access to Java objects from Ruby scripts on JRuby"
   spec.author = "Takeshi Akima"

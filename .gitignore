@@ -1,2 +1,4 @@
 *.class
+/
 /debugging
+rubeus-*.*.*-java.gem

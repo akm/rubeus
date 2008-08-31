@@ -4,7 +4,7 @@ gem "activesupport", ">=2.0.2"
 require "active_support/core_ext/string"
 
 module Rubeus
-  VERSION = "0.0.5"
+  VERSION = "0.0.6"
   autoload :Awt, "rubeus/awt"
   autoload :Swing, "rubeus/swing"
   autoload :Jdbc, "rubeus/jdbc"

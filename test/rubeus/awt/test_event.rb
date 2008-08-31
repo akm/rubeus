@@ -63,7 +63,9 @@ class TestEvent < Test::Unit::TestCase
       "window_state"=>["window_state_changed"]
     }
     JFrame.new do |f|
-      assert_equal(expectedHash, f.events)
+      expectedHash.keys.each do |key|
+        assert_equal(expectedHash[key].sort, f.events[key].sort)
+      end
     end
   end
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require "rubeus/component_loader"
 
 module Rubeus
@@ -10,6 +11,10 @@ module Rubeus
       'ResultSetMetaData' => 'java.sql', 
       'Statement' => 'java.sql'
       )
+    
+    def self.irb
+      self.extend_with
+    end
   end
 end
 

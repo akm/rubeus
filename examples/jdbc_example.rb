@@ -1,34 +1,15 @@
+# -*- coding: utf-8 -*-
 require 'java'
 require 'rubygems'
 require 'rubeus'
 
-def setup_derby
-  return if ENV_JAVA['java.class.path'].split(File::PATH_SEPARATOR).any?{|path| /derby[\-\.\d]*\.jar$/ =~ path}
-  if ENV_JAVA["java.specification.version"] == "1.6"
-    begin
-      require File.join(ENV_JAVA['java.home'], 'db', 'lib', 'derby.jar')
-      return
-    rescue LoadError
-      # ignore error if not installed JavaDB
-      # Apple's JDK doesn't include Apache Derby
-    end
-  end
-  puts "JavaDB is not installed."
-  puts "Please add derby.jar to your CLASSPATH."
-end
-
-setup_derby
-
 class JdbcExample
-  include Rubeus::Jdbc
-
-  def initialize
-    # Register Driver
-    Java::OrgApacheDerbyJdbc::EmbeddedDriver
-  end
+  # includeしててもOKだけど、参照するのは基本DriverManagerしかないので、
+  # DriverManager => Rubeus::Jdbc::DriverManager を使うようにすればOK
+  # include Rubeus::Jdbc
 
   def test
-    DriverManager.connect("jdbc:derby:test;create = true", "", "") do |con|
+    Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test;create = true", "", "") do |con|
       con.statement do |stmt|
         # Drop table TEST if exists
         begin

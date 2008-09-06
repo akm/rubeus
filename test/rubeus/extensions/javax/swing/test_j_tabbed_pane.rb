@@ -21,159 +21,158 @@ class TestJTabbedPane < Test::Unit::TestCase
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(javax.swing.JTabbedPane::TOP) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(javax.swing.JTabbedPane::TOP) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::TOP, tp.get_tab_placement)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(javax.swing.JTabbedPane::BOTTOM) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(javax.swing.JTabbedPane::BOTTOM) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::BOTTOM, tp.get_tab_placement)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(javax.swing.JTabbedPane::LEFT) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(javax.swing.JTabbedPane::LEFT) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::LEFT, tp.get_tab_placement)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(javax.swing.JTabbedPane::RIGHT) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(javax.swing.JTabbedPane::RIGHT) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::RIGHT, tp.get_tab_placement)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(javax.swing.JTabbedPane::TOP, javax.swing.JTabbedPane::WRAP_TAB_LAYOUT) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(javax.swing.JTabbedPane::TOP, javax.swing.JTabbedPane::WRAP_TAB_LAYOUT) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::TOP, tp.get_tab_placement)
+        assert_equal(javax.swing.JTabbedPane::WRAP_TAB_LAYOUT, tp.get_tab_layout_policy)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(javax.swing.JTabbedPane::BOTTOM, javax.swing.JTabbedPane::SCROLL_TAB_LAYOUT) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(javax.swing.JTabbedPane::BOTTOM, javax.swing.JTabbedPane::SCROLL_TAB_LAYOUT) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::BOTTOM, tp.get_tab_placement)
+        assert_equal(javax.swing.JTabbedPane::SCROLL_TAB_LAYOUT, tp.get_tab_layout_policy)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(javax.swing.JTabbedPane::LEFT, javax.swing.JTabbedPane::WRAP_TAB_LAYOUT) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(javax.swing.JTabbedPane::LEFT, javax.swing.JTabbedPane::WRAP_TAB_LAYOUT) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::LEFT, tp.get_tab_placement)
+        assert_equal(javax.swing.JTabbedPane::WRAP_TAB_LAYOUT, tp.get_tab_layout_policy)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(javax.swing.JTabbedPane::RIGHT, javax.swing.JTabbedPane::SCROLL_TAB_LAYOUT) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(javax.swing.JTabbedPane::RIGHT, javax.swing.JTabbedPane::SCROLL_TAB_LAYOUT) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::RIGHT, tp.get_tab_placement)
+        assert_equal(javax.swing.JTabbedPane::SCROLL_TAB_LAYOUT, tp.get_tab_layout_policy)
       end
     end
   end
 
   # test for constructors with symbol
   def test_constructors_with_symbol
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(:TOP) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::TOP, tp.get_tab_placement)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(:TOP) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(:BOTTOM) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::BOTTOM, tp.get_tab_placement)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(:BOTTOM) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(:LEFT) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::LEFT, tp.get_tab_placement)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(:LEFT) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(:RIGHT) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::RIGHT, tp.get_tab_placement)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(:RIGHT) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(:TOP, :WRAP_TAB_LAYOUT) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::TOP, tp.get_tab_placement)
+        assert_equal(javax.swing.JTabbedPane::WRAP_TAB_LAYOUT, tp.get_tab_layout_policy)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(:TOP, :WRAP_TAB_LAYOUT) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(:BOTTOM, :SCROLL_TAB_LAYOUT) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::BOTTOM, tp.get_tab_placement)
+        assert_equal(javax.swing.JTabbedPane::SCROLL_TAB_LAYOUT, tp.get_tab_layout_policy)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(:BOTTOM, :SCROLL_TAB_LAYOUT) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+    JFrame.new do |f|
+      JTabbedPane.new(:LEFT, :WRAP_TAB_LAYOUT) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
+
+        assert_equal(javax.swing.JTabbedPane::LEFT, tp.get_tab_placement)
+        assert_equal(javax.swing.JTabbedPane::WRAP_TAB_LAYOUT, tp.get_tab_layout_policy)
       end
     end
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(:LEFT, :WRAP_TAB_LAYOUT) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
-      end
-    end
+    JFrame.new do |f|
+      JTabbedPane.new(:RIGHT, :SCROLL_TAB_LAYOUT) do |tp|
+        JButton.new
+        JLabel.new("JTabbedPane test")
 
-    assert_nothing_raised do
-      JFrame.new do |f|
-        JTabbedPane.new(:RIGHT, :SCROLL_TAB_LAYOUT) do
-          JButton.new
-          JLabel.new("JTabbedPane test")
-        end
+        assert_equal(javax.swing.JTabbedPane::RIGHT, tp.get_tab_placement)
+        assert_equal(javax.swing.JTabbedPane::SCROLL_TAB_LAYOUT, tp.get_tab_layout_policy)
       end
     end
   end

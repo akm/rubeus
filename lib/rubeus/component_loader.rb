@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
+require 'rubeus/verboseable'
 module Rubeus
   class ComponentLoader < Module
-
     def self.class_names(*package_names)
       patterns = Regexp.union(
         *package_names.map{|package_name|
@@ -15,15 +16,21 @@ module Rubeus
       classes
     end
     
+    include ::Rubeus::Verboseable
+    
+    attr_accessor :verbose
     attr_reader :java_package
     attr_reader :class_to_package
 
     def initialize(java_package, &block)
+      self.verbose = Rubeus.verbose
       build_class_to_package_table(java_package)
       java_package = JavaUtilities.get_package_module_dot_format(java_package)
       class << java_package
         include Rubeus::JavaPackage
+        include Verboseable
       end
+      java_package.verbose = self.verbose
       super(&block)
     end
     
@@ -38,14 +45,14 @@ module Rubeus
         next if class_name.include?('$')
         package = parts.join('.')
         @class_to_package[class_name] = @class_to_package.key?(class_name) ?
-          [@class_to_package[class_name], package] : package
+        [@class_to_package[class_name], package] : package
       end
     end
     
     def included(mod)
       mod.extend(self)
     end
-   
+    
     def extended(object)
       class_name_for_method = self.name.underscore.gsub('/', '_')
       const_missing_with = "const_missing_with_#{class_name_for_method}"
@@ -74,8 +81,11 @@ module Rubeus
     
     def const_missing(java_class_name)
       if autoload?(java_class_name)
+        log_if_verbose("autoloading... #{java_class_name.to_s}")
         feature = autolodings.delete(java_class_name.to_s)
-        require(feature)
+        log_if_verbose("require(#{feature})") do
+          require(feature)
+        end
         return const_get(java_class_name)
       end
       package = @class_to_package[java_class_name.to_s]
@@ -108,28 +118,30 @@ module Rubeus
     def depend_on(*java_class_names)
       java_class_names.each{|java_class_name| self.const_get(java_class_name)}
     end
-
   end
 
   module JavaPackage
     def self.included(object)
       raise "JavaPackage must be extended by a Module" unless object.is_a?(Module)
       object.module_eval do
+        attr_accessor :verbose
         alias :method_missing_without_rubeus :method_missing
         alias :method_missing :method_missing_with_rubeus
         alias :const_missing_without_rubeus :const_missing
         alias :const_missing :const_missing_with_rubeus
       end
     end
-
+    
     def method_missing_with_rubeus(method, *args)
       java_fqn = "#{@package_name}#{method.to_s}"
       extension = Rubeus::Extensions.find_for(java_fqn)
       if extension
         @extension_applied ||= [] 
         unless @extension_applied.include?(java_fqn)
-          JavaUtilities.extend_proxy(java_fqn) do
-            include extension
+          log_if_verbose("JavaUtilities.extend_proxy(#{java_fqn})") do
+            JavaUtilities.extend_proxy(java_fqn) do
+              include extension
+            end
           end
           @extension_applied << java_fqn
         end
@@ -137,7 +149,9 @@ module Rubeus
       result = method_missing_without_rubeus(method, *args)
       class << result
         include ::Rubeus::JavaPackage
+        include Verboseable
       end
+      result.verbose = self.verbose
       result
     end
 

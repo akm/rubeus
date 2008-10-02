@@ -8,9 +8,14 @@ module Rubeus
   EMAIL_GROUP = 'rubeus@googlegroups.com'
   WEB_SITE = 'http://code.google.com/p/rubeus/'
   
+  autoload :Verbosable, "rubeus/verboseable"
+  
   autoload :Awt, "rubeus/awt"
   autoload :Swing, "rubeus/swing"
   autoload :Jdbc, "rubeus/jdbc"
+
+  def self.verbose; @verbose; end
+  def self.verbose=(value); @verbose = value; end
 end
 
 unless File.basename($PROGRAM_NAME) == 'gem' and ARGV.first == 'build'

@@ -14,8 +14,8 @@ Gem::Specification.new do |spec|
   spec.rubyforge_project = "rubybizcommons"
   spec.has_rdoc = false
 
-  spec.add_dependency("activesupport", ">= 2.0.2")
-  spec.files = FileList['bin/*', '{lib,examples,test}/**/*.{rb,rtf,png}'].to_a
+  spec.add_dependency("activesupport", ">= 2.1.0")
+  spec.files = FileList['bin/*', '{lib,examples,test}/**/*.{rb,jar,rtf,png}'].to_a
   spec.require_path = "lib"
   spec.requirements = ["none"]
   spec.autorequire = 'rubeus' # autorequire is deprecated

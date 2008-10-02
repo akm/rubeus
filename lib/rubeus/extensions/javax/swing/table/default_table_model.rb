@@ -1,3 +1,4 @@
+Rubeus::Swing.depend_on('TableModel')
 Rubeus::Swing.depend_on('AbstractTableModel')
 
 module Rubeus::Extensions::Javax::Swing::Table
@@ -52,7 +53,13 @@ module Rubeus::Extensions::Javax::Swing::Table
         return new_without_rubeus(*args) 
       end
     end
+
+    attr_accessor :readonly
     
+    def isCellEditable(row, col)
+      !readonly
+    end
+
     def vectorize_if_array(value)
       self.class.vectorize_if_array(value)
     end

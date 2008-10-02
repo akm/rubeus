@@ -6,7 +6,7 @@ require 'rubeus'
 class TestStatement < Test::Unit::TestCase
   # setup method
   def setup
-    @con = Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test;create = true", "", "")
+    @con = Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test_db;create = true", "", "")
   end
 
   def test_query

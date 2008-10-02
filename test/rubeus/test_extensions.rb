@@ -1,7 +1,7 @@
 require 'test/unit'
 require 'rubygems'
 require 'rubeus'
-Rubeus.verbose = true
+# Rubeus.verbose = true
 
 # Test for extensions.rb
 class TestExtensions < Test::Unit::TestCase

@@ -1,6 +1,7 @@
 Rubeus::Swing.depend_on('JComponent')
+Rubeus::Swing.depend_on('TableModel')
+Rubeus::Swing.depend_on('ReadonlyableTableModel')
 Rubeus::Swing.depend_on('DefaultTableModel')
-require 'delegate'
 
 module Rubeus::Extensions::Javax::Swing
   module JTable
@@ -24,29 +25,12 @@ module Rubeus::Extensions::Javax::Swing
     end
     
     def set_model_with_rubeus(model, *args)
-      unless model.is_a?(javax.swing.table.TableModel)
-        model = javax.swing.table.DefaultTableModel.new(model, *args)
+      unless model.is_a?(Rubeus::Swing::TableModel)
+        model = Rubeus::Swing::DefaultTableModel.new(model, *args)
       end
-      delegator = DelegatableTableModel.new(model)
-      set_model_without_rubeus(@model = delegator)
-    end
-
-    class DelegatableTableModel
-      # include javax.swing.table.TableModel
-      
-      attr_accessor :readonly
-      
-      def initialize(source)
-        @source = source
-      end
-
-      def method_missing(method, *args, &block)
-        @source.__send__(method, *args, &block)
-      end
-      
-      def isCellEditable(row, col)
-        !readonly
-      end
+      delegator = Rubeus::Swing::ReadonlyableTableModel.new(model)
+      @model = delegator
+      set_model_without_rubeus(@model)
     end
   end
 end

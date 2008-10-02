@@ -13,16 +13,25 @@ module Rubeus
     def log_if_verbose(*messages)
       return(block_given? ? yield : nil) unless self.verbose
       name = is_a?(Module) ? self.name : self.class.name
-      msg = "#{name} #{messages.join("\n")}"
+      msg = "#{name} %s" % 
+        messages.map{|m| m.is_a?(Exception) ? ("#{m.to_s}\n%s" % m.backtrace.join("\n  ")) : m }.
+        join("\n")
+      @@indent ||= 0
+      if @@indent > 0
+        msg.gsub!(/^/, '  ' * @@indent)
+      end
       if block_given?
-        Verboseable.out.puts("#{msg} BEGIN")
+        indent_backup = @@indent
+        @@indent += 1
+        Verboseable.out.puts("#{msg} {")
         begin
-          result = yield
-          Verboseable.out.puts("#{msg} END")
-          result
+          return yield
         rescue Exception => err
-          Verboseable.out.puts("#{msg} RAISED: #{err.inspect}")
+          Verboseable.out.puts("#{'  ' * @@indent} RAISED: #{err.inspect}")
           raise
+        ensure
+          @@indent = indent_backup
+          Verboseable.out.puts("#{'  ' * @@indent}}")
         end
       else
         Verboseable.out.puts(msg)

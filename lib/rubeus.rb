@@ -1,7 +1,15 @@
+require File.join(File.dirname(__FILE__), 'rubeus.jar')
+
 require "rubygems"
-gem "activesupport", ">=2.0.2"
+gem "activesupport", ">=2.1.0"
 # require "active_support"
 require "active_support/core_ext/string"
+
+Kernel.module_eval <<-EOS
+  def jp
+    JavaUtilities.get_package_module_dot_format('jp')    
+  end
+EOS
 
 module Rubeus
   VERSION = '0.0.7'

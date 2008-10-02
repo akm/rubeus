@@ -10,7 +10,7 @@ class TestDriverManager < Test::Unit::TestCase
 
   def test_normal
     assert_nothing_raised do
-      @con = Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test;create = true", "", "")
+      @con = Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test_db;create = true", "", "")
     end
 
     if @con
@@ -22,13 +22,13 @@ class TestDriverManager < Test::Unit::TestCase
   def test_without_auto_setup_manager
     assert_nothing_raised do
       org.apache.derby.jdbc.EmbeddedDriver
-      @con = Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test;create = true", "", "", :auto_setup_manager => false)
+      @con = Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test_db;create = true", "", "", :auto_setup_manager => false)
       @con.close
     end
   end
 
   def test_with_block
-    con = Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test;create = true") do |con|
+    con = Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test_db;create = true") do |con|
       assert_equal(false, con.closed?)
     end
     assert_nil(con)

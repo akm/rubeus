@@ -1,15 +1,18 @@
+# -*- coding: utf-8 -*-
 require "rubeus/component_loader"
 require "rubeus/awt"
 
 module Rubeus
   Swing = ComponentLoader.new("javax.swing") do
-    class_to_package.update(
+    class_to_package.update({
       # $JAVA_HOME/lib/classlistにないものリスト
-      'JTextPane' => 'javax.swing',
-      'RTFEditorKit' => 'javax.swing.text.rtf',
-      'DefaultTableModel' => 'javax.swing.table'
-      )
-    class_to_package['DefaultStyledDocument'] ||= 'javax.swing.text' # Windowsにない
+       'JTextPane' => 'javax.swing',
+       'RTFEditorKit' => 'javax.swing.text.rtf',
+       'DefaultTableModel' => 'javax.swing.table',
+       'DelegatableTableModel' => 'jp.rubybizcommons.rubeus.extensions.javax.swing.table',
+       'ReadonlyableTableModel' => 'jp.rubybizcommons.rubeus.extensions.javax.swing.table',
+      })
+    class_to_package['DefaultStyledDocument'] ||= 'javax.swing.text' # Windowsにない?
     
     def self.irb
       Rubeus::Awt.extend_with

@@ -1,4 +1,5 @@
 *.class
 /
 /debugging
+/test_db
 rubeus-*.*.*-java.gem

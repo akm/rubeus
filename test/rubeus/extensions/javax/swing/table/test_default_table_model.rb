@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
 require 'test/unit'
 require 'rubygems'
 require 'rubeus'
 require 'rexml/document'
+
+# Rubeus.verbose = true
 
 # Test for Rubeus::Extensions::Javax::Swing::Table
 class TestDefaultTableModel < Test::Unit::TestCase

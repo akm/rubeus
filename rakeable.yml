@@ -1,0 +1,6 @@
+--- 
+java: 
+  artifact_id: java_supply
+  group_id: jp.rubybizcommons.rubeus
+  rake_prefix: java
+  pom_dir: java

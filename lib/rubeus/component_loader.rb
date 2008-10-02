@@ -69,7 +69,7 @@ module Rubeus
       end
       object.extend(mod)
       object.instance_variable_set(loader_name, self)
-      object.instance_eval <<-EOS
+      object.instance_eval(<<-"EOS")
         alias :#{const_missing_without} :const_missing
         alias :const_missing :#{const_missing_with}
       EOS
@@ -94,12 +94,14 @@ module Rubeus
         raise NameError, "cannot specified package name for #{java_class_name}: #{package.join(', ')}"
       end
       java_fqn = package.empty? ? java_class_name.to_s : "#{package}.#{java_class_name.to_s}"
-      result = instance_eval(java_fqn)
+      extension = Rubeus::Extensions.apply_for(java_fqn)
+      result = log_if_verbose("instance_eval(#{java_fqn})") do
+        instance_eval(java_fqn)
+      end
       self.const_set(java_class_name, result)
       result
     rescue
-      puts $!
-      puts $!.backtrace.join("\n  ")
+      log_if_verbose($!)
       super
     end
 
@@ -134,18 +136,7 @@ module Rubeus
     
     def method_missing_with_rubeus(method, *args)
       java_fqn = "#{@package_name}#{method.to_s}"
-      extension = Rubeus::Extensions.find_for(java_fqn)
-      if extension
-        @extension_applied ||= [] 
-        unless @extension_applied.include?(java_fqn)
-          log_if_verbose("JavaUtilities.extend_proxy(#{java_fqn})") do
-            JavaUtilities.extend_proxy(java_fqn) do
-              include extension
-            end
-          end
-          @extension_applied << java_fqn
-        end
-      end
+      extension = Rubeus::Extensions.apply_for(java_fqn)
       result = method_missing_without_rubeus(method, *args)
       class << result
         include ::Rubeus::JavaPackage

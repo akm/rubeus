@@ -3,7 +3,7 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 
 require 'rubygems'
-require 'rakeable'
+require 'rmaven'
 require 'tasks/mvn'
 
 desc 'Default: run unit tests.'

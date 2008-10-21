@@ -20,7 +20,7 @@ class TestDimension < Test::Unit::TestCase
 
 	# create with array size 1
 	def test_create_with_array_size_1
-		assert_raise(NameError) do
+		assert_raise(ArgumentError) do
 			d = Dimension.create([200])
 		end
 	end
@@ -35,7 +35,7 @@ class TestDimension < Test::Unit::TestCase
 
 	# create with array size 3
 	def test_create_with_array_size_3
-		assert_raise(NameError) do
+		assert_raise(ArgumentError) do
 			d = Dimension.create([200, 300, 400])
 		end
 	end

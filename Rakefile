@@ -11,8 +11,8 @@ task :default => :test
 
 desc 'Test the selectable_attr plugin.'
 Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.pattern = 'test/**/test_*.rb'
+  t.libs << File.join(File.dirname(__FILE__), 'lib') 
+  t.pattern = File.join(File.dirname(__FILE__), 'test', 'rubeus', '**', 'test_*.rb')
   t.verbose = true
 end
 

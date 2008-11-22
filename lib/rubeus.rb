@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__), 'rubeus.jar')
 
 require "rubygems"
-gem "activesupport", "=2.1.1"
+gem "activesupport", "=2.1.2"
 # require "active_support"
 require "active_support/core_ext/string"
 

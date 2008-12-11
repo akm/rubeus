@@ -12,6 +12,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
     @con.statement do |stmt|
       drop_table_if_exist("TEST", stmt)
       # DDL from http://db.apache.org/derby/docs/dev/ja_JP/ref/rrefsqlj13590.html
+      # Index from http://db.apache.org/derby/docs/dev/ja_JP/ref/rrefsqlj20937.html
       create_table_after_drop(<<-"EOS", stmt)
         CREATE TABLE FLIGHTS(
           FLIGHT_ID CHAR(6) NOT NULL ,
@@ -37,6 +38,9 @@ class TestDatabaseMetaData < Test::Unit::TestCase
           REFERENCES Flights (FLIGHT_ID, SEGMENT_NUMBER)
           );
       EOS
+      stmt.execute_update('CREATE INDEX IDX_FLIGHT_01 ON Flights(orig_airport)')
+      stmt.execute_update('CREATE INDEX IDX_FLIGHT_02 ON Flights(orig_airport, DEPART_TIME desc)')
+      stmt.execute_update('CREATE INDEX IDX_FLIGHT_03 ON Flights(DEST_AIRPORT, ARRIVE_TIME desc)')
       create_table_after_drop(<<-"EOS", stmt)
         CREATE TABLE CITIES(
           ID INT NOT NULL CONSTRAINT CITIES_PK PRIMARY KEY,
@@ -48,6 +52,8 @@ class TestDatabaseMetaData < Test::Unit::TestCase
           CITY_ID INT CONSTRAINT METRO_FK REFERENCES CITIES
           );
       EOS
+      stmt.execute_update('CREATE UNIQUE INDEX IDX_CITIES_01 ON CITIES(CITY_NAME)')
+      stmt.execute_update('CREATE UNIQUE INDEX IDX_METROPOLITAN_01 ON METROPOLITAN(CITY_ID, HOTEL_NAME)')
       create_table_after_drop(<<-"EOS", stmt)
         CREATE TABLE TEST1(
           ID INT NOT NULL,
@@ -88,6 +94,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
     assert_equal(nullable ? 
       java.sql.DatabaseMetaData.columnNullable : 
       java.sql.DatabaseMetaData.columnNoNulls, column.nullable)
+    assert_equal column, table[name]
   end
   
   def test_table_object_columns
@@ -177,6 +184,28 @@ class TestDatabaseMetaData < Test::Unit::TestCase
     assert_pk(tables['cities'], %w(id))
     assert_pk(tables['metropolitan'], %w(hotel_id))
     assert_pk(tables['test1'], [])
+  end
+  
+  def assert_index(table, index_name, key_names, asc_descs)
+    assert_equal key_names, table.indexes[index_name].keys.map{|k| k.name}
+    assert_equal asc_descs, table.indexes[index_name].keys.map{|k| k.asc?}
+  end
+  
+  def test_table_objects_index
+    tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
+    # assert_equal %w(idx_flight_01 idx_flight_02 idx_flight_03), tables['flights'].indexes.map{|idx| idx.name}
+    # assert_equal 3, tables['flights'].indexes.length
+    assert_index(tables['flights'], 'idx_flight_01', %w(orig_airport), [true])
+    assert_index(tables['flights'], 'idx_flight_02', %w(orig_airport depart_time), [true, false])
+    assert_index(tables['flights'], 'idx_flight_03', %w(dest_airport arrive_time), [true, false])
+    # assert_equal 0, tables['fltavail'].indexes.length
+    
+    # assert_equal 1, tables['cities'].indexes.length
+    assert_index(tables['cities'], 'idx_cities_01', %w(city_name), [true])
+    # assert_equal 1, tables['metropolitan'].indexes.length
+    assert_index(tables['metropolitan'], 'idx_metropolitan_01', %w(city_id hotel_name), [true, true])
+
+    # assert_equal 0, tables['test1'].indexes.length
   end
   
 end

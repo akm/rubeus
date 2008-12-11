@@ -2,6 +2,7 @@
 require 'rubeus/jdbc/meta_element'
 require "rubeus/jdbc/column"
 require "rubeus/jdbc/primary_key"
+require "rubeus/jdbc/index"
 module Rubeus::Jdbc
   class Table < MetaElement
     
@@ -28,15 +29,14 @@ module Rubeus::Jdbc
     attr_accessor :columns
     attr_accessor :imported_keys
     attr_accessor :exported_keys
-    attr_reader :indexes
-    
-    def initialize(meta_data, attrs, options)
-      super(meta_data, attrs, options)
-      @indexes = []
-    end
     
     def name
       table_name.send(options[:name_case] || :to_s)
+    end
+    
+    def [](column_name)
+      column_name = column_name.to_s.upcase
+      columns.detect{|col|col.column_name.upcase == column_name}
     end
 
     def primary_keys
@@ -83,6 +83,35 @@ module Rubeus::Jdbc
     def match?(meta_data)
       MATCHING_ATTRS.all?{|attr|jdbc_info[attr] == meta_data[attr]}
     end
+
+    def indexes
+      unless @indexes
+        @indexes = Rubeus::Util::NameAccessArray.new
+        index_infos = meta_data.getIndexInfo(table_cat, table_schem, table_name, false, true).map{|r| r.to_hash}
+        index_hash = {}
+        index_infos.each do |index_info|
+          index_uniq_key = Rubeus::Jdbc::Index::RECORD_UNIQUE_ATTRS.
+            map{|attr| attr.to_s}.map{|attr| attr.upcase}.map{|key| index_info[key]}
+          unless index_hash[index_uniq_key]
+            attrs = Rubeus::Jdbc::Index::ATTR_NAMES.map{|attr| attr.to_s}.
+              inject({}){|dest, name| dest[name.downcase] = index_info[name.upcase]; dest}
+            index = Rubeus::Jdbc::Index.new(meta_data, self, attrs, options)
+            @indexes << index
+            index_hash[index_uniq_key] = index
+          end
+        end
+        index_infos.each do |index_info|
+          index_uniq_key = Rubeus::Jdbc::Index::RECORD_UNIQUE_ATTRS.
+            map{|attr| attr.to_s}.map{|attr| attr.upcase}.map{|key| index_info[key]}
+          index = index_hash[index_uniq_key]
+          attrs = Rubeus::Jdbc::Index::Key::ATTR_NAMES.map{|attr| attr.to_s}.
+            inject({}){|dest, name| dest[name.downcase] = index_info[name.upcase]; dest}
+          index.keys << Rubeus::Jdbc::Index::Key.new(meta_data, index, attrs, options)
+        end
+      end
+      @indexes
+    end
+    
     
     def rails_table_name
       unless @rails_table_name
@@ -116,9 +145,5 @@ module Rubeus::Jdbc
       mod.const_get(class_name)
     end
     
-    def [](column_name)
-      column_name = column_name.to_s.upcase
-      columns.detect{|col|col.name == column_name}
-    end
   end
 end

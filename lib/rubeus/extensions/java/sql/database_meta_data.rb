@@ -2,10 +2,26 @@ Rubeus::Jdbc.depend_on("Statement")
 
 module Rubeus::Extensions::Java::Sql
   module DatabaseMetaData
+    def included(mod)
+      mod.module_eval do 
+        alias_method :getTables_without_rubeus, :getTables
+        alias_method :getTables, :getTables_with_rubeus
+      end
+    end
+    
+    def getTables_with_rubeus(*args, &block)
+      case args.length
+        when 0, 1 then table_objects(*args, &block)
+        else getTables_without_rubeus(*args, &block)
+      end
+    end
+    alias_method :tables, :getTables_with_rubeus
+    
     def table_object(table_name, options = nil)
       options = {:table_name_pattern => table_name}.update(options || {})
       table_objects(options).first
     end
+    alias_method :table, :table_object
     
     def table_objects(options = nil)
       options = {

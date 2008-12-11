@@ -175,6 +175,15 @@ class TestDatabaseMetaData < Test::Unit::TestCase
       assert_equal table.pk_columns, table.pk_column
       assert_equal table.pk_columns, table.primary_key_column
     end
+    table.columns.each do |column|
+      if table.pk_names.include?(column.name)
+        assert_equal true, column.primary_key?, "#{table.name}.#{column.name} shoud be one of pk"
+        assert_equal true, column.pk?, "#{table.name}.#{column.name} shoud be one of pk"
+      else
+        assert_equal false, column.primary_key?, "#{table.name}.#{column.name} shoud not be one of pk"
+        assert_equal false, column.pk?, "#{table.name}.#{column.name} shoud not be one of pk"
+      end
+    end
   end
   
   def test_table_objects_pk

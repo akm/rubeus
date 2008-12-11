@@ -70,12 +70,13 @@ module Rubeus::Jdbc
     end
     
     def primary_key_index
-      @primary_key_index ||= table.primary_key_namess.index(self.name)
+      @primary_key_index ||= table.primary_key_names.index(self.name)
     end
     
     def primary_key?
       !!primary_key_index
     end
+    alias_method :pk?, :primary_key?
     
     def default
       self.column_def.nil? ? nil :

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 module Rubeus::Jdbc
-  class ImportedKey < MetaElement
+  class ImportedKey < TableElement
     #   1. PKTABLE_CAT String => インポートされた主キーテーブルカタログ (null の可能性がある)
     #   2. PKTABLE_SCHEM String => インポートされた主キーテーブルスキーマ (null の可能性がある)
     #   3. PKTABLE_NAME String => インポートされた主キーテーブル名
@@ -36,14 +36,8 @@ module Rubeus::Jdbc
     :fktable_cat, :fktable_schem, :fktable_name, :fkcolumn_name,
     :key_seq, :update_rule, :delete_rule, :fk_name, :pk_name, :deferrability
     
-    attr_reader :table
     alias_method :fktable, :table
     attr_accessor :pktable
-
-    def initialize(meta_data, table, *args, &block)
-      super(meta_data, *args, &block)
-      @table = table
-    end
 
     def pretty_print_instance_variables
       super - [:@table, :@fktable, :@pktable]

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'rubeus/jdbc/meta_element'
 module Rubeus::Jdbc
-  class Index < MetaElement
+  class Index < TableElement
     #  1.  TABLE_CAT String => テーブルカタログ (null の可能性がある)
     #  2. TABLE_SCHEM String => テーブルスキーマ (null の可能性がある)
     #  3. TABLE_NAME String => テーブル名
@@ -29,17 +29,8 @@ module Rubeus::Jdbc
       :pages, :filter_condition]
     attr_accessor(*ATTR_NAMES)
     
-    attr_reader :table
-    attr_reader :columns
-
-    def initialize(meta_data, table, *args, &block)
-      super(meta_data, *args, &block)
-      @table = table
-      @columns = []
-    end
-
-    def pretty_print_instance_variables
-      super - [:@table]
+    def columns
+      @columns ||= []
     end
   end
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'rubeus/jdbc/meta_element'
 module Rubeus::Jdbc
-  class Column < MetaElement
+  class Column < TableElement
     #  1. TABLE_CAT           String => テーブルカタログ (null の可能性がある)
     #  2. TABLE_SCHEM         String => テーブルスキーマ (null の可能性がある)
     #  3. TABLE_NAME          String => テーブル名
@@ -38,16 +38,9 @@ module Rubeus::Jdbc
     :sql_datetime_sub, :char_octet_length,
     :ordinal_position, :is_nullable, 
     :scope_catlog, :scope_schema, :scope_table, :scope_data_type
-    alias_method :name, :column_name
+
     alias_method :size, :column_size
-    
-    attr_reader :table
-    
-    def initialize(meta_data, table, *args, &block)
-      super(meta_data, *args, &block)
-      @table = table
-    end
-    
+        
     def name
       column_name.send(options[:name_case] || :to_s)
     end
@@ -76,7 +69,7 @@ module Rubeus::Jdbc
     end
     
     def primary_key_index
-      @primary_key_index ||= table.primary_keys.index(self.name)
+      @primary_key_index ||= table.primary_key_namess.index(self.name)
     end
     
     def primary_key?

@@ -19,7 +19,6 @@ module Rubeus::Extensions::Java::Sql
           map{|hash| Rubeus::Jdbc::Column.new(self, table, hash, options)})
       end
       
-      
       tables
     end
   end

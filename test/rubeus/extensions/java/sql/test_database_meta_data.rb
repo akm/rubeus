@@ -76,13 +76,18 @@ class TestDatabaseMetaData < Test::Unit::TestCase
   def assert_column(table, name, type, size, nullable)
     column = table.columns[name]
     assert_not_nil column, "column '#{name}' not found"
-    assert_equal java.sql.Types.const_get(type.to_s.upcase), column.data_type, "column '#{name}' type expected #{java.sql.Types.const_get(type.to_s.upcase).inspect} but #{column.data_type.inspect}"
-    assert_equal size, column.size, "column '#{name}' size expected #{size.inspect} but #{column.size.inspect}"
-    assert_equal nullable, column.nullable?, "column '#{name}' nullable expected #{nullable.inspect} but #{column.nullable?.inspect}"
-    assert_equal nullable ? java.sql.DatabaseMetaData.columnNullable : java.sql.DatabaseMetaData.columnNoNulls, column.nullable
+    assert_equal(java.sql.Types.const_get(type.to_s.upcase), column.data_type, 
+      "column '#{name}' type expected #{java.sql.Types.const_get(type.to_s.upcase).inspect} but #{column.data_type.inspect}")
+    assert_equal(size, column.size, 
+      "column '#{name}' size expected #{size.inspect} but #{column.size.inspect}")
+    assert_equal(nullable, column.nullable?, 
+      "column '#{name}' nullable expected #{nullable.inspect} but #{column.nullable?.inspect}")
+    assert_equal(nullable ? 
+      java.sql.DatabaseMetaData.columnNullable : 
+      java.sql.DatabaseMetaData.columnNoNulls, column.nullable)
   end
   
-  def test_test_table_object_columns
+  def test_table_object_columns
     tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
     assert_equal 4, tables.length
     table_hash = tables.inject({}){|d, t| d[t.name] = t; d}
@@ -120,6 +125,38 @@ class TestDatabaseMetaData < Test::Unit::TestCase
     puts e.to_s
     puts e.backtrace.join("\n  ")
     raise e
+  end
+  
+  def assert_pk(table, names)
+    assert_equal names.length, table.primary_keys.length
+    assert_equal names, table.pks.map{|k| k.name}
+    assert_equal names, table.primary_keys.map{|k| k.name}
+    assert_equal names, table.pk_names
+    assert_equal names, table.primary_key_names
+    names.each_with_index do |name, index|
+      assert_equal name, table.primary_keys[name].name
+      assert_equal index + 1, table.primary_keys[name].seq
+      assert_equal table.columns[name], table.primary_key_columns[name]
+      assert_equal table.columns[name], table.pk_columns[name]
+    end
+  end
+  
+  def test_table_objects_pk
+    tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
+    assert_equal 4, tables.length
+    table_hash = tables.inject({}){|d, t| d[t.name] = t; d}
+    #
+    assert_not_nil flights = table_hash['flights']
+    assert_pk(flights, %w(flight_id segment_number))
+    #
+    assert_not_nil fltavail = table_hash['fltavail']
+    assert_pk(fltavail, %w(flight_id segment_number))
+    #
+    assert_not_nil ctiies = table_hash['cities']
+    assert_pk(ctiies, %w(id))
+    #
+    assert_not_nil metropolitan = table_hash['metropolitan']
+    assert_pk(metropolitan, %w(hotel_id))
   end
   
 end

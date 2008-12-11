@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'rubeus/jdbc/meta_element'
 require "rubeus/jdbc/column"
+require "rubeus/jdbc/primary_key"
 module Rubeus::Jdbc
   class Table < MetaElement
     
@@ -22,11 +23,9 @@ module Rubeus::Jdbc
     :table_type,
     :remarks, :type_cat, :type_schem, :type_name, 
     :self_referencing_col_name, :ref_generation
-    alias_method :name, :table_name
     
     attr_accessor :pluralize_table_name
     attr_accessor :columns
-    attr_accessor :primary_keys
     attr_accessor :imported_keys
     attr_accessor :exported_keys
     attr_reader :indexes
@@ -43,8 +42,32 @@ module Rubeus::Jdbc
     def primary_key
       primary_keys.nil? ? nil :
         primary_keys.empty? ? nil : 
-        primary_keys.length == 1 ? primary_keys.first : nil
+        primary_keys.length == 1 ? primary_keys.first : primary_keys
     end
+
+    def primary_keys
+      unless @primary_keys
+        pkeys = meta_data.getPrimaryKeys(table_cat, table_schem, table_name).map{|r| r.to_hash}
+        @primary_keys = Rubeus::Util::NameAccessArray.new(
+          *pkeys.
+          select{|hash|self.match?(hash)}.
+          sort{|a,b| a['KEY_SEQ'] <=> b['KEY_SEQ']}.
+          map{|hash| Rubeus::Jdbc::PrimaryKey.new(meta_data, self, hash, options)})
+      end
+      @primary_keys
+    end
+    alias_method :pks, :primary_keys
+
+    def primary_key_names
+      primary_keys.map{|pk| pk.name}
+    end
+    alias_method :pk_names, :primary_key_names
+
+    def primary_key_columns
+      @primary_key_columns ||= 
+        Rubeus::Util::NameAccessArray.new(*primary_keys.map{|pk| self.columns[pk.name]})
+    end
+    alias_method :pk_columns, :primary_key_columns
     
     MATCHING_ATTRS = %w(TABLE_CAT TABLE_SCHEM TABLE_NAME)
     

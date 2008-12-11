@@ -15,4 +15,17 @@ module Rubeus::Jdbc
       self.instance_variables.sort.map{|v| v.to_sym} - [:@meta_data, :@jdbc_info, :@table]
     end
   end
+
+  class TableElement < MetaElement
+    attr_reader :table
+
+    def initialize(meta_data, table, *args, &block)
+      super(meta_data, *args, &block)
+      @table = table
+    end
+    
+    def pretty_print_instance_variables
+      super - [:@table]
+    end
+  end
 end

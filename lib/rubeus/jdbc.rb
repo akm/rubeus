@@ -5,10 +5,11 @@ module Rubeus
   Jdbc = ComponentLoader.new("java.sql") do
     class_to_package.update(
       # $JAVA_HOME/lib/classlistにないものリスト
-      'Connection' => 'java.sql', 
-      'DriverManager' => 'java.sql', 
-      'ResultSet' => 'java.sql', 
-      'ResultSetMetaData' => 'java.sql', 
+      'Connection' => 'java.sql',
+      'DatabaseMetaData' => 'java.sql',
+      'DriverManager' => 'java.sql',
+      'ResultSet' => 'java.sql',
+      'ResultSetMetaData' => 'java.sql',
       'Statement' => 'java.sql'
       )
     

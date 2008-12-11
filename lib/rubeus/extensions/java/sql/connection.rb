@@ -1,4 +1,5 @@
 Rubeus::Jdbc.depend_on("Statement")
+Rubeus::Jdbc.depend_on("DatabaseMetaData")
 
 module Rubeus::Extensions::Java::Sql
   module Connection

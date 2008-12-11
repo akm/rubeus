@@ -26,13 +26,13 @@ module Rubeus::Extensions::Java::Sql
     private
     def build_columns
       result = []
-      attrs = Rubeus::Jdbc::Column::ATTRIBUTES
+      attrs = Rubeus::Jdbc::ResultSetColumn::ATTRIBUTES
       each do |i|
         column_hash = attrs.inject({}) do |dest, attr|
           dest[attr] = send(attr, i)
           dest
         end
-        result << Rubeus::Jdbc::Column.new(i,column_hash)
+        result << Rubeus::Jdbc::ResultSetColumn.new(i,column_hash)
       end
       result
     end

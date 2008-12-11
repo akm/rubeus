@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 module Rubeus::Jdbc
   # ResultSetMetaDataから生成されます
-  class Column
+  class ResultSetColumn
     ATTRIBUTES = [
       :column_index       , # 
       :catalog_name       , # String  # 指定された列のテーブルのカタログ名を取得します。

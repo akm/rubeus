@@ -19,4 +19,4 @@ module Rubeus
 end
 
 require "rubeus/jdbc/closeable_resource"
-require "rubeus/jdbc/column"
+require "rubeus/jdbc/result_set_column"

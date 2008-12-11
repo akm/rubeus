@@ -12,7 +12,7 @@ Kernel.module_eval <<-EOS
 EOS
 
 module Rubeus
-  VERSION = '0.0.7'
+  VERSION = '0.0.8'
   EMAIL_GROUP = 'rubeus@googlegroups.com'
   WEB_SITE = 'http://code.google.com/p/rubeus/'
   

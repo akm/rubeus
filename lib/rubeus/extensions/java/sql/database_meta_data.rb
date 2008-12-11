@@ -2,11 +2,25 @@ Rubeus::Jdbc.depend_on("Statement")
 
 module Rubeus::Extensions::Java::Sql
   module DatabaseMetaData
-    def table_object(catalog = nil, schema_pattern = nil, table_name = nil, options = nil)
-      table_objects(catalog, schema_pattern, table_name, options).first
+    def table_object(table_name, options = nil)
+      options = {:table_name_pattern => table_name}.update(options || {})
+      table_objects(options).first
     end
     
-    def table_objects(catalog = nil, schema_pattern = nil, table_name_pattern = nil, options = nil)
+    def table_objects(options = nil)
+      options = {
+        :catalog => nil, 
+        :schema => nil,
+        :schema_pattern => nil,
+        :table => nil,
+        :table_name => nil,
+        :table_name_pattern => nil,
+        :name_case => nil # nil, :downcase, :upcase
+      }.update(options || {})
+      catalog = options[:catalog] 
+      schema_pattern = options[:schema_pattern] || options[:schema]
+      table_name_pattern = options[:table_name_pattern] || options[:table_name] || options[:table]
+      
       @table_objects ||= {}
       unless table_name_pattern.nil?
         key = [catalog, schema_pattern, table_name_pattern].map{|s| s.nil? ? nil : s.to_s.upcase}
@@ -14,9 +28,6 @@ module Rubeus::Extensions::Java::Sql
         return [cached] if cached
       end
       
-      options = {
-        :name_case => nil # nil, :downcase, :upcase
-      }.update(options || {})
       tables = getTables(catalog, schema_pattern, table_name_pattern, nil).map do |rs|
         Rubeus::Jdbc::Table.new(self, rs.to_hash, options)
       end

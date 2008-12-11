@@ -119,8 +119,8 @@ module Rubeus::Jdbc
               inject({}){|dest, name| dest[name.downcase] = imported_key[name.upcase]; dest}
             foreign_key = Rubeus::Jdbc::ForeignKey.new(meta_data, self, attrs, options)
             foreign_key.fktable = self
-            foreign_key.pktable = meta_data.table_object(
-              imported_key['PKTABLE_CAT'], imported_key['PKTABLE_SCHEM'], imported_key['PKTABLE_NAME'])
+            foreign_key.pktable = meta_data.table_object(imported_key['PKTABLE_NAME'],
+              :catalog => imported_key['PKTABLE_CAT'], :schema => imported_key['PKTABLE_SCHEM'])
             @imported_keys << foreign_key
             imported_key_hash[unique_key] = foreign_key
           end
@@ -150,8 +150,8 @@ module Rubeus::Jdbc
             attrs = Rubeus::Jdbc::ForeignKey::ATTR_NAMES.map{|attr| attr.to_s}.
               inject({}){|dest, name| dest[name.downcase] = exported_key[name.upcase]; dest}
             foreign_key = Rubeus::Jdbc::ForeignKey.new(meta_data, self, attrs, options)
-            foreign_key.fktable = meta_data.table_object(
-              exported_key['FKTABLE_CAT'], exported_key['FKTABLE_SCHEM'], exported_key['FKTABLE_NAME'])
+            foreign_key.fktable = meta_data.table_object(exported_key['FKTABLE_NAME'],
+              :catalog => exported_key['FKTABLE_CAT'], :schema => exported_key['FKTABLE_SCHEM'])
             foreign_key.pktable = self
             @exported_keys << foreign_key
             exported_key_hash[unique_key] = foreign_key

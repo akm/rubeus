@@ -68,7 +68,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
   end
 
   def test_table_objects
-    tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
+    tables = @con.meta_data.table_objects(:schema => "APP", :name_case => :downcase)
     assert_equal 5, tables.length
     assert_equal ['cities', 'flights', 'fltavail', 'metropolitan', 'test1'], tables.map{|t|t.name}.sort
     assert_not_nil tables['flights']
@@ -98,7 +98,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
   end
   
   def test_table_object_columns
-    tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
+    tables = @con.meta_data.table_objects(:schema => "APP", :name_case => :downcase)
     #
     assert_not_nil flights = tables['flights']
     assert_equal 7, flights.columns.length
@@ -187,7 +187,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
   end
   
   def test_table_objects_pk
-    tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
+    tables = @con.meta_data.table_objects(:schema => "APP", :name_case => :downcase)
     assert_pk(tables['flights'], %w(flight_id segment_number))
     assert_pk(tables['fltavail'], %w(flight_id segment_number))
     assert_pk(tables['cities'], %w(id))
@@ -201,7 +201,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
   end
   
   def test_table_objects_index
-    tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
+    tables = @con.meta_data.table_objects(:schema => "APP", :name_case => :downcase)
     # assert_equal %w(idx_flight_01 idx_flight_02 idx_flight_03), tables['flights'].indexes.map{|idx| idx.name}
     # assert_equal 3, tables['flights'].indexes.length
     assert_index(tables['flights'], 'idx_flight_01', %w(orig_airport), [true])
@@ -245,7 +245,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
   end
   
   def test_table_objects_imported_keys_and_exported_keys
-    tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
+    tables = @con.meta_data.table_objects(:schema => "APP", :name_case => :downcase)
     assert_fk('flts_fk', 
       tables['flights'], %w(flight_id segment_number),
       tables['fltavail'], %w(flight_id segment_number))

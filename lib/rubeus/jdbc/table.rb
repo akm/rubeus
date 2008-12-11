@@ -39,12 +39,6 @@ module Rubeus::Jdbc
       table_name.send(options[:name_case] || :to_s)
     end
 
-    def primary_key
-      primary_keys.nil? ? nil :
-        primary_keys.empty? ? nil : 
-        primary_keys.length == 1 ? primary_keys.first : primary_keys
-    end
-
     def primary_keys
       unless @primary_keys
         pkeys = meta_data.getPrimaryKeys(table_cat, table_schem, table_name).map{|r| r.to_hash}
@@ -68,6 +62,21 @@ module Rubeus::Jdbc
         Rubeus::Util::NameAccessArray.new(*primary_keys.map{|pk| self.columns[pk.name]})
     end
     alias_method :pk_columns, :primary_key_columns
+    
+    def self.singular_access_if_possible(method_name, plural_method)
+      define_method(method_name) do
+        values = self.send(plural_method)
+        (values.nil? || values.empty?) ? nil :
+          (values.length == 1) ? values.first : values
+      end
+    end
+    
+    singular_access_if_possible(:pk, :pks)
+    singular_access_if_possible(:pk_name, :pk_names)
+    singular_access_if_possible(:pk_column, :pk_columns)
+    singular_access_if_possible(:primary_key, :primary_keys)
+    singular_access_if_possible(:primary_key_name, :primary_key_names)
+    singular_access_if_possible(:primary_key_column, :primary_key_columns)
     
     MATCHING_ATTRS = %w(TABLE_CAT TABLE_SCHEM TABLE_NAME)
     

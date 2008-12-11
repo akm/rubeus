@@ -145,6 +145,29 @@ class TestDatabaseMetaData < Test::Unit::TestCase
       assert_equal table.columns[name], table.primary_key_columns[name]
       assert_equal table.columns[name], table.pk_columns[name]
     end
+    case names.length
+    when 0
+      assert_equal nil, table.pk
+      assert_equal nil, table.primary_key
+      assert_equal nil, table.pk_name
+      assert_equal nil, table.primary_key_name
+      assert_equal nil, table.pk_column
+      assert_equal nil, table.primary_key_column
+    when 1
+      assert_equal table.pks.first, table.pk
+      assert_equal table.pks.first, table.primary_key
+      assert_equal table.pk_names.first, table.pk_name
+      assert_equal table.pk_names.first, table.primary_key_name
+      assert_equal table.pk_columns.first, table.pk_column
+      assert_equal table.pk_columns.first, table.primary_key_column
+    else
+      assert_equal table.pks, table.pk
+      assert_equal table.pks, table.primary_key
+      assert_equal table.pk_names, table.pk_name
+      assert_equal table.pk_names, table.primary_key_name
+      assert_equal table.pk_columns, table.pk_column
+      assert_equal table.pk_columns, table.primary_key_column
+    end
   end
   
   def test_table_objects_pk

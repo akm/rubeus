@@ -16,8 +16,13 @@ module Rubeus
     def self.irb
       self.extend_with
     end
+    
+    # auto_load :MetaElement, "rubeus/jdbc/meta_element"
+    # auto_load :Table, "rubeus/jdbc/table"
+    # auto_load :Column, "rubeus/jdbc/column"
   end
 end
 
 require "rubeus/jdbc/closeable_resource"
 require "rubeus/jdbc/result_set_column"
+require "rubeus/jdbc/table"

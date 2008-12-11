@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'rubeus/jdbc/meta_element'
+require "rubeus/jdbc/column"
 module Rubeus::Jdbc
   class Table < MetaElement
     
@@ -30,9 +31,13 @@ module Rubeus::Jdbc
     attr_accessor :exported_keys
     attr_reader :indexes
     
-    def initialize(meta_data, options)
-      super(meta_data, options)
+    def initialize(meta_data, attrs, options)
+      super(meta_data, attrs, options)
       @indexes = []
+    end
+    
+    def name
+      table_name.send(options[:name_case] || :to_s)
     end
 
     def primary_key

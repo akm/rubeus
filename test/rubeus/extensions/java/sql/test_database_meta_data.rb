@@ -9,13 +9,6 @@ class TestDatabaseMetaData < Test::Unit::TestCase
 
   def setup
     setup_connection
-  end
-  
-  def teardown
-    teardown_connection
-  end
-
-  def test_table_objects
     @con.statement do |stmt|
       drop_table_if_exist("TEST", stmt)
       # DDL from http://db.apache.org/derby/docs/dev/ja_JP/ref/rrefsqlj13590.html
@@ -60,6 +53,27 @@ class TestDatabaseMetaData < Test::Unit::TestCase
           );
       EOS
     end
+  end
+  
+  def teardown
+    teardown_connection
+  end
+
+  def test_table_objects
+    tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
+    assert_equal 4, tables.length
+    assert_equal ['cities', 'flights', 'fltavail', 'metropolitan'], tables.map{|t|t.name}.sort
+    assert_not_nil flights = tables['flights']
+    assert_not_nil fltavail = tables['fltavail']
+    assert_not_nil ctiies = tables['cities']
+    assert_not_nil metropolitan = tables['metropolitan']
+  rescue => e
+    puts e.to_s
+    puts e.backtrace.join("\n  ")
+    raise e
+  end
+  
+  def test_test_table_object_columns
     tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
     assert_equal 4, tables.length
     table_hash = tables.inject({}){|d, t| d[t.name] = t; d}
@@ -67,10 +81,21 @@ class TestDatabaseMetaData < Test::Unit::TestCase
     assert_not_nil fltavail = table_hash['fltavail']
     assert_not_nil ctiies = table_hash['cities']
     assert_not_nil metropolitan = table_hash['metropolitan']
+    #
+#           FLIGHT_ID CHAR(6) NOT NULL ,
+#           SEGMENT_NUMBER INTEGER NOT NULL ,
+#           ORIG_AIRPORT CHAR(3),
+#           DEPART_TIME TIME,
+#           DEST_AIRPORT CHAR(3),
+#           ARRIVE_TIME TIME,
+#           MEAL CHAR(1) CONSTRAINT MEAL_CONSTRAINT 
+    
+    
   rescue => e
     puts e.to_s
     puts e.backtrace.join("\n  ")
     raise e
   end
+  
 end
 

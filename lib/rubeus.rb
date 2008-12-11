@@ -21,6 +21,7 @@ module Rubeus
   autoload :Awt, "rubeus/awt"
   autoload :Swing, "rubeus/swing"
   autoload :Jdbc, "rubeus/jdbc"
+  autoload :Util, "rubeus/util"
 
   def self.verbose; @verbose; end
   def self.verbose=(value); @verbose = value; end

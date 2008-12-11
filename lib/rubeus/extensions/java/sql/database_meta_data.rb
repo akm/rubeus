@@ -9,8 +9,7 @@ module Rubeus::Extensions::Java::Sql
       tables = getTables(catalog, schema_pattern, table_name_pattern, nil).map do |rs|
         Rubeus::Jdbc::Table.new(self, rs.to_hash, options)
       end
-      table_hash = tables.inject({}){|d, t| d[t.name] = t; d}
-      
+      tables = Rubeus::Util::NameAccessArray.new(*tables)
       
       tables
     end

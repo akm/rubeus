@@ -13,8 +13,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
       drop_table_if_exist("TEST", stmt)
       # DDL from http://db.apache.org/derby/docs/dev/ja_JP/ref/rrefsqlj13590.html
       create_table_after_drop(<<-"EOS", stmt)
-        CREATE TABLE FLIGHTS
-          (
+        CREATE TABLE FLIGHTS(
           FLIGHT_ID CHAR(6) NOT NULL ,
           SEGMENT_NUMBER INTEGER NOT NULL ,
           ORIG_AIRPORT CHAR(3),
@@ -25,8 +24,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
           CHECK (MEAL IN ('B', 'L', 'D', 'S')),
           PRIMARY KEY (FLIGHT_ID, SEGMENT_NUMBER)
           );
-        CREATE TABLE FLTAVAIL
-          (
+        CREATE TABLE FLTAVAIL(
           FLIGHT_ID CHAR(6) NOT NULL, 
           SEGMENT_NUMBER INT NOT NULL, 
           FLIGHT_DATE DATE NOT NULL, 
@@ -40,16 +38,20 @@ class TestDatabaseMetaData < Test::Unit::TestCase
           );
       EOS
       create_table_after_drop(<<-"EOS", stmt)
-        CREATE TABLE CITIES
-          (
+        CREATE TABLE CITIES(
           ID INT NOT NULL CONSTRAINT CITIES_PK PRIMARY KEY,
           CITY_NAME VARCHAR(50)
           );
-        CREATE TABLE METROPOLITAN
-          (
+        CREATE TABLE METROPOLITAN(
           HOTEL_ID INT NOT NULL CONSTRAINT HOTELS_PK PRIMARY KEY,
           HOTEL_NAME VARCHAR(40) NOT NULL,
           CITY_ID INT CONSTRAINT METRO_FK REFERENCES CITIES
+          );
+      EOS
+      create_table_after_drop(<<-"EOS", stmt)
+        CREATE TABLE TEST1(
+          ID INT NOT NULL,
+          NAME VARCHAR(60)
           );
       EOS
     end
@@ -61,12 +63,13 @@ class TestDatabaseMetaData < Test::Unit::TestCase
 
   def test_table_objects
     tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
-    assert_equal 4, tables.length
-    assert_equal ['cities', 'flights', 'fltavail', 'metropolitan'], tables.map{|t|t.name}.sort
-    assert_not_nil flights = tables['flights']
-    assert_not_nil fltavail = tables['fltavail']
-    assert_not_nil ctiies = tables['cities']
-    assert_not_nil metropolitan = tables['metropolitan']
+    assert_equal 5, tables.length
+    assert_equal ['cities', 'flights', 'fltavail', 'metropolitan', 'test1'], tables.map{|t|t.name}.sort
+    assert_not_nil tables['flights']
+    assert_not_nil tables['fltavail']
+    assert_not_nil tables['cities']
+    assert_not_nil tables['metropolitan']
+    assert_not_nil tables['test1']
   rescue => e
     puts e.to_s
     puts e.backtrace.join("\n  ")
@@ -89,10 +92,8 @@ class TestDatabaseMetaData < Test::Unit::TestCase
   
   def test_table_object_columns
     tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
-    assert_equal 4, tables.length
-    table_hash = tables.inject({}){|d, t| d[t.name] = t; d}
     #
-    assert_not_nil flights = table_hash['flights']
+    assert_not_nil flights = tables['flights']
     assert_equal 7, flights.columns.length
     assert_column(flights, 'flight_id', :char, 6, false)
     assert_column(flights, 'segment_number', :integer, 10, false)
@@ -102,7 +103,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
     assert_column(flights, 'arrive_time', :time, 8, true)
     assert_column(flights, 'meal', :char, 1, true)
     #
-    assert_not_nil fltavail = table_hash['fltavail']
+    assert_not_nil fltavail = tables['fltavail']
     assert_equal 6, fltavail.columns.length
     assert_column(fltavail, 'flight_id', :char, 6, false)
     assert_column(fltavail, 'segment_number', :integer, 10, false)
@@ -111,16 +112,21 @@ class TestDatabaseMetaData < Test::Unit::TestCase
     assert_column(fltavail, 'business_seats_taken', :integer, 10, true)
     assert_column(fltavail, 'firstclass_seats_taken', :integer, 10, true)
     #
-    assert_not_nil ctiies = table_hash['cities']
+    assert_not_nil ctiies = tables['cities']
     assert_equal 2, ctiies.columns.length
     assert_column(ctiies, 'id', :integer, 10, false)
     assert_column(ctiies, 'city_name', :varchar, 50, true)
     #
-    assert_not_nil metropolitan = table_hash['metropolitan']
+    assert_not_nil metropolitan = tables['metropolitan']
     assert_equal 3, metropolitan.columns.length
     assert_column(metropolitan, 'hotel_id', :integer, 10, false)
     assert_column(metropolitan, 'hotel_name', :varchar, 40, false)
     assert_column(metropolitan, 'city_id', :integer, 10, true)
+    #
+    assert_not_nil test1 = tables['test1']
+    assert_equal 2, test1.columns.length
+    assert_column(test1, 'id', :integer, 10, false)
+    assert_column(test1, 'name', :varchar, 60, true)
   rescue => e
     puts e.to_s
     puts e.backtrace.join("\n  ")
@@ -143,20 +149,11 @@ class TestDatabaseMetaData < Test::Unit::TestCase
   
   def test_table_objects_pk
     tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
-    assert_equal 4, tables.length
-    table_hash = tables.inject({}){|d, t| d[t.name] = t; d}
-    #
-    assert_not_nil flights = table_hash['flights']
-    assert_pk(flights, %w(flight_id segment_number))
-    #
-    assert_not_nil fltavail = table_hash['fltavail']
-    assert_pk(fltavail, %w(flight_id segment_number))
-    #
-    assert_not_nil ctiies = table_hash['cities']
-    assert_pk(ctiies, %w(id))
-    #
-    assert_not_nil metropolitan = table_hash['metropolitan']
-    assert_pk(metropolitan, %w(hotel_id))
+    assert_pk(tables['flights'], %w(flight_id segment_number))
+    assert_pk(tables['fltavail'], %w(flight_id segment_number))
+    assert_pk(tables['cities'], %w(id))
+    assert_pk(tables['metropolitan'], %w(hotel_id))
+    assert_pk(tables['test1'], [])
   end
   
 end

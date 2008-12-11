@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 module Rubeus::Jdbc
-  class ImportedKey < TableElement
+  class ForeignKey < TableElement
     #   1. PKTABLE_CAT String => インポートされた主キーテーブルカタログ (null の可能性がある)
     #   2. PKTABLE_SCHEM String => インポートされた主キーテーブルスキーマ (null の可能性がある)
     #   3. PKTABLE_NAME String => インポートされた主キーテーブル名
@@ -30,17 +30,37 @@ module Rubeus::Jdbc
     #          * importedKeyNotDeferrable - 定義については SQL92 を参照 
     # 
     # see also:
+    # http://java.sun.com/javase/ja/6/docs/ja/api/java/sql/DatabaseMetaData.html#getExportedKeys(java.lang.String,%20java.lang.String,%20java.lang.String)
     # http://java.sun.com/javase/ja/6/docs/ja/api/java/sql/DatabaseMetaData.html#getImportedKeys(java.lang.String,%20java.lang.String,%20java.lang.String)
-    #
-    attr_accessor :pktable_cat, :pktable_schem, :pktable_name, :pkcolumn_name,
-    :fktable_cat, :fktable_schem, :fktable_name, :fkcolumn_name,
-    :key_seq, :update_rule, :delete_rule, :fk_name, :pk_name, :deferrability
+
+    ATTR_NAMES = [:pktable_cat, :pktable_schem, :pktable_name, # :pkcolumn_name,
+      :fktable_cat, :fktable_schem, :fktable_name, # :fkcolumn_name,
+      :key_seq, :update_rule, :delete_rule, :fk_name, :pk_name, :deferrability]
+    attr_accessor *ATTR_NAMES
+
+    attr_accessor :fkcolumn_names, :pkcolumn_names
+    attr_accessor :fktable, :pktable
     
-    alias_method :fktable, :table
-    attr_accessor :pktable
+    def name
+      fk_name.send(options[:name_case] || :to_s)
+    end
 
     def pretty_print_instance_variables
-      super - [:@table, :@fktable, :@pktable]
+      super - [:@fktable, :@pktable]
     end
+    
+    def length
+      pkcolumn_names.length
+    end
+    alias_method :size, :length
+    
+    def fkcolumns
+      @fkcolumns ||= fkcolumn_names.map{|name| fktable.columns[name]}
+    end
+    
+    def pkcolumns
+      @pkcolumns ||= pkcolumn_names.map{|name| pktable.columns[name]}
+    end
+    
   end
 end

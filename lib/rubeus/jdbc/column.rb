@@ -2,6 +2,8 @@
 require 'rubeus/jdbc/meta_element'
 module Rubeus::Jdbc
   class Column < TableElement
+    include FullyQualifiedNamed
+    
     #  1. TABLE_CAT           String => テーブルカタログ (null の可能性がある)
     #  2. TABLE_SCHEM         String => テーブルスキーマ (null の可能性がある)
     #  3. TABLE_NAME          String => テーブル名
@@ -31,8 +33,7 @@ module Rubeus::Jdbc
     # see also:
     # http://java.sun.com/javase/ja/6/docs/ja/api/java/sql/DatabaseMetaData.html#getColumns(java.lang.String,%20java.lang.String,%20java.lang.String,%20java.lang.String)
     # 
-    attr_accessor :table_cat, :table_schem, :table_name, 
-    :column_name, :data_type, :type_name, :column_size,
+    attr_accessor :column_name, :data_type, :type_name, :column_size,
     :buffer_length, :decimal_digits, :num_prec_radix,
     :nullable, :remarks, :column_def, :sql_data_type,
     :sql_datetime_sub, :char_octet_length,

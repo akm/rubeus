@@ -2,6 +2,7 @@
 require 'rubeus/jdbc/meta_element'
 module Rubeus::Jdbc
   class PrimaryKey < TableElement
+    include FullyQualifiedNamed
     
     # 1. TABLE_CAT String => テーブルカタログ (null の可能性がある)
     # 2. TABLE_SCHEM String => テーブルスキーマ (null の可能性がある)
@@ -13,8 +14,7 @@ module Rubeus::Jdbc
     # see also:
     # http://java.sun.com/j2se/1.5.0/ja/docs/ja/api/java/sql/DatabaseMetaData.html#getPrimaryKeys(java.lang.String,%20java.lang.String,%20java.lang.String)
     
-    attr_accessor :table_cat, :table_schem, :table_name, 
-    :column_name, :key_seq, :pk_name
+    attr_accessor :column_name, :key_seq, :pk_name
 
     alias_method :seq, :key_seq
     

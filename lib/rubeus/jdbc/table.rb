@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 require 'rubeus/jdbc/meta_element'
 require "rubeus/jdbc/column"
-require "rubeus/jdbc/primary_key"
 require "rubeus/jdbc/index"
+require "rubeus/jdbc/primary_key"
+require "rubeus/jdbc/foreign_key"
 module Rubeus::Jdbc
   class Table < MetaElement
+    include FullyQualifiedNamed
     
     #  1. TABLE_CAT       String => テーブルカタログ (null の可能性がある)
     #  2. TABLE_SCHEM     String => テーブルスキーマ (null の可能性がある)
@@ -20,18 +22,15 @@ module Rubeus::Jdbc
     # see also:
     # http://java.sun.com/javase/ja/6/docs/ja/api/java/sql/DatabaseMetaData.html#getTables(java.lang.String,%20java.lang.String,%20java.lang.String,%20java.lang.String[])
     # 
-    attr_accessor :table_cat, :table_schem, :table_name, 
-    :table_type,
+    attr_accessor :table_type,
     :remarks, :type_cat, :type_schem, :type_name, 
     :self_referencing_col_name, :ref_generation
     
     attr_accessor :pluralize_table_name
     attr_accessor :columns
-    attr_accessor :imported_keys
-    attr_accessor :exported_keys
     
     def name
-      table_name.send(options[:name_case] || :to_s)
+      self.table_name.send(options[:name_case] || :to_s)
     end
     
     def [](column_name)
@@ -44,7 +43,7 @@ module Rubeus::Jdbc
         pkeys = meta_data.getPrimaryKeys(table_cat, table_schem, table_name).map{|r| r.to_hash}
         @primary_keys = Rubeus::Util::NameAccessArray.new(
           *pkeys.
-          select{|hash|self.match?(hash)}.
+          select{|hash|self.same_fqn?(hash)}.
           sort{|a,b| a['KEY_SEQ'] <=> b['KEY_SEQ']}.
           map{|hash| Rubeus::Jdbc::PrimaryKey.new(meta_data, self, hash, options)})
       end
@@ -78,12 +77,6 @@ module Rubeus::Jdbc
     singular_access_if_possible(:primary_key_name, :primary_key_names)
     singular_access_if_possible(:primary_key_column, :primary_key_columns)
     
-    MATCHING_ATTRS = %w(TABLE_CAT TABLE_SCHEM TABLE_NAME)
-    
-    def match?(meta_data)
-      MATCHING_ATTRS.all?{|attr|jdbc_info[attr] == meta_data[attr]}
-    end
-
     def indexes
       unless @indexes
         @indexes = Rubeus::Util::NameAccessArray.new
@@ -111,6 +104,71 @@ module Rubeus::Jdbc
       end
       @indexes
     end
+    
+    IMPORTED_KEY_UNIQUE_ATTRS = %w(PKTABLE_CAT PKTABLE_SCHEM PKTABLE_NAME FK_NAME)
+    
+    def imported_keys
+      unless @imported_keys
+        @imported_keys = Rubeus::Util::NameAccessArray.new
+        imported_key_hash = {}
+        imported_keys = meta_data.getImportedKeys(table_cat, table_schem, table_name).map{|r| r.to_hash}
+        imported_keys.each do |imported_key|
+          unique_key = IMPORTED_KEY_UNIQUE_ATTRS.map{|attr| imported_key[attr]}
+          unless imported_key_hash[unique_key]
+            attrs = Rubeus::Jdbc::ForeignKey::ATTR_NAMES.map{|attr| attr.to_s}.
+              inject({}){|dest, name| dest[name.downcase] = imported_key[name.upcase]; dest}
+            foreign_key = Rubeus::Jdbc::ForeignKey.new(meta_data, self, attrs, options)
+            foreign_key.fktable = self
+            foreign_key.pktable = meta_data.table_object(
+              imported_key['PKTABLE_CAT'], imported_key['PKTABLE_SCHEM'], imported_key['PKTABLE_NAME'])
+            @imported_keys << foreign_key
+            imported_key_hash[unique_key] = foreign_key
+          end
+        end
+        imported_keys.each do |imported_key|
+          unique_key = IMPORTED_KEY_UNIQUE_ATTRS.map{|attr| imported_key[attr]}
+          foreign_key = imported_key_hash[unique_key]
+          foreign_key.fkcolumn_names ||= []
+          foreign_key.pkcolumn_names ||= []
+          foreign_key.fkcolumn_names << imported_key['FKCOLUMN_NAME'].send(options[:name_case] || :to_s)
+          foreign_key.pkcolumn_names << imported_key['PKCOLUMN_NAME'].send(options[:name_case] || :to_s)
+        end
+      end
+      @imported_keys
+    end
+    
+    EXPORTED_KEY_UNIQUE_ATTRS = %w(FKTABLE_CAT FKTABLE_SCHEM FKTABLE_NAME PK_NAME)
+    
+    def exported_keys
+      unless @exported_keys
+        @exported_keys = Rubeus::Util::NameAccessArray.new
+        exported_key_hash = {}
+        exported_keys = meta_data.getExportedKeys(table_cat, table_schem, table_name).map{|r| r.to_hash}
+        exported_keys.each do |exported_key|
+          unique_key = EXPORTED_KEY_UNIQUE_ATTRS.map{|attr| exported_key[attr]}
+          unless exported_key_hash[unique_key]
+            attrs = Rubeus::Jdbc::ForeignKey::ATTR_NAMES.map{|attr| attr.to_s}.
+              inject({}){|dest, name| dest[name.downcase] = exported_key[name.upcase]; dest}
+            foreign_key = Rubeus::Jdbc::ForeignKey.new(meta_data, self, attrs, options)
+            foreign_key.fktable = meta_data.table_object(
+              exported_key['FKTABLE_CAT'], exported_key['FKTABLE_SCHEM'], exported_key['FKTABLE_NAME'])
+            foreign_key.pktable = self
+            @exported_keys << foreign_key
+            exported_key_hash[unique_key] = foreign_key
+          end
+        end
+        exported_keys.each do |exported_key|
+          unique_key = EXPORTED_KEY_UNIQUE_ATTRS.map{|attr| exported_key[attr]}
+          foreign_key = exported_key_hash[unique_key]
+          foreign_key.fkcolumn_names ||= []
+          foreign_key.pkcolumn_names ||= []
+          foreign_key.fkcolumn_names << exported_key['FKCOLUMN_NAME'].send(options[:name_case] || :to_s)
+          foreign_key.pkcolumn_names << exported_key['PKCOLUMN_NAME'].send(options[:name_case] || :to_s)
+        end
+      end
+      @exported_keys
+    end
+    
     
     
     def rails_table_name

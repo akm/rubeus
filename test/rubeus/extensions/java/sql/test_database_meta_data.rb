@@ -208,5 +208,41 @@ class TestDatabaseMetaData < Test::Unit::TestCase
     # assert_equal 0, tables['test1'].indexes.length
   end
   
-end
+  def assert_fk(fk_name, pktable, pkcolumn_names, fktable, fkcolumn_names)
+    imported_key = fktable.imported_keys[fk_name]
+    exported_key = pktable.exported_keys[fk_name]
+    assert_equal fk_name, imported_key.name
+    assert_equal fk_name, exported_key.name
+    
+    assert_equal pktable.name, imported_key.pktable.name
+    assert_equal fktable.name, imported_key.fktable.name
+    assert_equal pktable.name, exported_key.pktable.name
+    assert_equal fktable.name, exported_key.fktable.name
+    
+    assert_equal pkcolumn_names.length, imported_key.length
+    assert_equal fkcolumn_names.length, exported_key.length
+    assert_equal imported_key.length, exported_key.length
 
+    pkcolumn_names.each_with_index do |column_name, index|
+      [imported_key, exported_key].each do |key|
+        assert_equal pkcolumn_names[index], key.pkcolumn_names[index]
+        assert_equal pkcolumn_names[index], key.pkcolumns[index].name
+        assert_equal pktable, key.pkcolumns[index].table
+        assert_equal fkcolumn_names[index], key.fkcolumn_names[index]
+        assert_equal fkcolumn_names[index], key.fkcolumns[index].name
+        assert_equal fktable, key.fkcolumns[index].table
+      end
+    end
+  end
+  
+  def test_table_objects_imported_keys_and_exported_keys
+    tables = @con.meta_data.table_objects(nil, "APP", nil, :name_case => :downcase)
+    assert_fk('flts_fk', 
+      tables['flights'], %w(flight_id segment_number),
+      tables['fltavail'], %w(flight_id segment_number))
+    assert_fk('metro_fk', 
+      tables['cities'], %w(id),
+      tables['metropolitan'], %w(city_id))
+  end
+  
+end

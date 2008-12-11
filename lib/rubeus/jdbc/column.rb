@@ -48,6 +48,10 @@ module Rubeus::Jdbc
       @table = table
     end
     
+    def name
+      column_name.send(options[:name_case] || :to_s)
+    end
+    
     def jdbc_type
       @column_type ||= (TYPE_ID_TO_NAMES[data_type] || type_name || '')
     end

@@ -12,7 +12,7 @@ module Rubeus::Jdbc
     end
     
     def pretty_print_instance_variables
-      self.instance_variables.sort.map(&:to_sym) - [:@meta_data, :@jdbc_info, :@table]
+      self.instance_variables.sort.map{|v| v.to_sym} - [:@meta_data, :@jdbc_info, :@table]
     end
   end
 end

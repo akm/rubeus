@@ -1,12 +1,14 @@
 require 'test/unit'
 require 'rubygems'
 require 'rubeus'
+require 'test/rubeus/extensions/java/sql/test_sql_helper'
 
 # Test for statement.rb
 class TestStatement < Test::Unit::TestCase
-  # setup method
+  include TestSqlHelper
+
   def setup
-    @con = Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test_db;create = true", "", "")
+    setup_connection
   end
 
   def test_query
@@ -37,7 +39,7 @@ class TestStatement < Test::Unit::TestCase
   end
 
   def teardown
-    @con.close
+    teardown_connection
   end
 end
 

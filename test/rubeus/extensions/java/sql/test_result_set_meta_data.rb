@@ -1,25 +1,15 @@
 require 'test/unit'
 require 'rubygems'
 require 'rubeus'
+require 'test/rubeus/extensions/java/sql/test_sql_helper'
 
 # Test for result_set_meta_data.rb
 class TestResultSetMetaData < Test::Unit::TestCase
-  # setup method
+  include TestSqlHelper
+
   def setup
-    @con = Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test_db;create = true", "", "")
-
-    # Drop test table
-    begin
-      @con.statement do |stmt|
-        stmt.execute_update("DROP TABLE TEST")
-      end
-    rescue
-      # table test is already exist
-    end
-
-    @con.statement do |stmt|
-      stmt.execute_update("CREATE TABLE TEST (ID INT, NAME CHAR(10))")
-    end
+    setup_connection
+    create_table_after_drop("CREATE TABLE TEST (ID INT, NAME CHAR(10))")
   end
 
   def test_each_without_block
@@ -115,7 +105,7 @@ class TestResultSetMetaData < Test::Unit::TestCase
   end
 
   def teardown
-    @con.close
+    teardown_connection
   end
 end
 

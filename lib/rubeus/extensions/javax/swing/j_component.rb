@@ -1,19 +1,18 @@
-Rubeus::Awt.depend_on("Container")
+Rubeus::Awt.depend_on("Container", "Dimension")
 
 module Rubeus::Extensions::Javax::Swing
   module JComponent
     
     def self.included(base)
       base.module_eval do
-        alias_method :set_preferred_size_without_rubeus, :set_preferred_size
-        alias_method :set_preferred_size, :set_preferred_size_with_rubeus
-        alias_method :preferred_size=, :set_preferred_size_with_rubeus
+        alias_method :set_preferred_size, :set_preferred_size_rubeus
+        alias_method :preferred_size=, :set_preferred_size_rubeus
       end
     end
-    
-    def set_preferred_size_with_rubeus(*args)
-      set_preferred_size_without_rubeus(Rubeus::Awt::Dimension.create(*args))
+
+    def set_preferred_size_rubeus(*args)
+      dimension = Rubeus::Awt::Dimension
+      java_send :setPreferredSize, [dimension], dimension.create(*args)
     end
-    
   end
 end

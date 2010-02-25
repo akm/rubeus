@@ -11,16 +11,15 @@ module Rubeus::Extensions::Javax::Swing
       }
       if ENV_JAVA["java.specification.version"] == "1.6"
         base.module_eval do
-          alias_method :set_size_without_rubeus, :set_size
-          alias_method :set_size, :set_size_with_rubeus
-          alias_method :size=, :set_size_with_rubeus
+          alias_method :size=, :set_size
         end
       end
     end
-    
+
     if ENV_JAVA["java.specification.version"] == "1.6"
-      def set_size_with_rubeus(*args)
-        set_size_without_rubeus(Rubeus::Awt::Dimension.create(*args))
+      def set_size(*args)
+        java_send :setSize, [java.awt.Dimension], 
+          Rubeus::Awt::Dimension.create(*args)
       end
     end
   end

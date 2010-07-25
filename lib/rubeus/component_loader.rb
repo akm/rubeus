@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'rubeus/verboseable'
+require 'java'
 module Rubeus
   class ComponentLoader < Module
     def self.class_names(*package_names)
@@ -15,9 +16,9 @@ module Rubeus
       end
       classes
     end
-    
+
     include ::Rubeus::Verboseable
-    
+
     attr_accessor :verbose
     attr_reader :java_package
     attr_reader :class_to_package
@@ -33,7 +34,7 @@ module Rubeus
       java_package.verbose = self.verbose
       super(&block)
     end
-    
+
     def build_class_to_package_table(java_package)
       class_names = ::Rubeus::ComponentLoader.class_names(java_package)
       @class_to_package = {}
@@ -48,18 +49,18 @@ module Rubeus
         [@class_to_package[class_name], package] : package
       end
     end
-    
+
     def included(mod)
       mod.extend(self)
     end
-    
+
     def extended(object)
       class_name_for_method = self.name.underscore.gsub('/', '_')
       const_missing_with = "const_missing_with_#{class_name_for_method}"
       const_missing_without = "const_missing_without_#{class_name_for_method}"
       return if object.singleton_methods.include?(const_missing_with)
       loader_name = "@loader_#{class_name_for_method}".to_sym
-      mod = Module.new 
+      mod = Module.new
       mod.send(:define_method, const_missing_with) do |const_name|
         begin
           instance_variable_get(loader_name).const_get(const_name)
@@ -78,7 +79,7 @@ module Rubeus
     def extend_with(mod = Object)
       mod.send(:extend, self)
     end
-    
+
     def const_missing(java_class_name)
       if autoload?(java_class_name)
         log_if_verbose("autoloading... #{java_class_name.to_s}")
@@ -108,15 +109,15 @@ module Rubeus
     def autolodings
       @autolodings ||= {}
     end
-    
+
     def autoload(const_name, feature = nil)
       autolodings[const_name.to_s] = feature ||"#{self.name}::#{java_class_name.to_s}".underscore
     end
-    
+
     def autoload?(const_name)
       autolodings[const_name.to_s]
     end
-    
+
     def depend_on(*java_class_names)
       java_class_names.each{|java_class_name| self.const_get(java_class_name)}
     end
@@ -133,7 +134,7 @@ module Rubeus
         alias :const_missing :const_missing_with_rubeus
       end
     end
-    
+
     def method_missing_with_rubeus(method, *args)
       java_fqn = "#{@package_name}#{method.to_s}"
       extension = Rubeus::Extensions.apply_for(java_fqn)

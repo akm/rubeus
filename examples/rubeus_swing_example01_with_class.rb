@@ -1,11 +1,9 @@
-include Java
-
 require 'rubygems'
 require "rubeus"
 
 class Example01
   extend Rubeus::Swing
-  
+
   def show
     JFrame.new("Rubeus Swing Example 01") do |frame|
       frame.layout = BoxLayout.new(:Y_AXIS)

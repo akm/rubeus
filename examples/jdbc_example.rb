@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-require 'java'
 require 'rubygems'
 require 'rubeus'
 
@@ -9,7 +8,7 @@ class JdbcExample
   # include Rubeus::Jdbc
 
   def test
-    Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test;create = true", "", "") do |con|
+    Rubeus::Jdbc::DriverManager.connect("jdbc:derby:testdb;create = true", "", "") do |con|
       con.statement do |stmt|
         # Drop table TEST if exists
         begin

@@ -1,5 +1,3 @@
-include Java
-
 require 'rubygems'
 require "rubeus"
 

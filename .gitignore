@@ -1,5 +1,6 @@
 *.class
 /
+/coverage
 /debugging
 /pkg
 /test_db

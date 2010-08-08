@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'rubygems'
 require 'rmaven'
 require 'tasks/mvn'
@@ -15,6 +16,7 @@ begin
     gem.authors = ["akimatter"]
     gem.add_dependency "activesupport", "= 2.1.2"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_development_dependency "rcov", ">= 0.9.8"
     gem.bindir = 'bin'
     gem.executables = %w[jirb_rubeus jirb_rubeus.bat]
   end
@@ -35,6 +37,7 @@ begin
   Rcov::RcovTask.new do |test|
     test.libs << 'test'
     test.pattern = 'test/**/test_*.rb'
+    test.rcov_opts = ['--text-report', '--exclude "test/*,gems/*"']
     test.verbose = true
   end
 rescue LoadError

@@ -3,7 +3,7 @@ module Rubeus::Jdbc
     def with_close(resource)
       if block_given?
         begin
-          yield(resource) 
+          yield(resource)
         ensure
           resource.close
         end

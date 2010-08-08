@@ -2,7 +2,7 @@ Rubeus::Awt.depend_on("Container", "Dimension")
 
 module Rubeus::Extensions::Javax::Swing
   module JComponent
-    
+
     def self.included(base)
       base.module_eval do
         alias_method :set_preferred_size, :set_preferred_size_rubeus

@@ -19,11 +19,11 @@ module Rubeus::Extensions::Javax::Swing
         alias_method :model=, :set_model
       end
     end
-    
+
     def get_model_with_rubeus
       @model || get_model_without_rubeus
     end
-    
+
     def set_model_with_rubeus(model, *args)
       unless model.is_a?(Rubeus::Swing::TableModel)
         model = Rubeus::Swing::DefaultTableModel.new(model, *args)

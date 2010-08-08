@@ -3,7 +3,7 @@ module Rubeus::Jdbc
   # ResultSetMetaDataから生成されます
   class ResultSetColumn
     ATTRIBUTES = [
-      :column_index       , # 
+      :column_index       , #
       :catalog_name       , # String  # 指定された列のテーブルのカタログ名を取得します。
       :column_class_name  , # String  # Java クラスの完全指定された名前を返します。
       :column_display_size, # int     # 指定された列の通常の最大幅を文字数で示します。
@@ -33,7 +33,7 @@ module Rubeus::Jdbc
     alias_method :label       , :column_label
     alias_method :name        , :column_name
     alias_method :type_name   , :column_type_name
-    
+
     alias_method :auto_increment?     , :auto_increment
     alias_method :case_sensitive?     , :case_sensitive
     alias_method :currency?           , :currency
@@ -43,7 +43,7 @@ module Rubeus::Jdbc
     alias_method :searchable?         , :searchable
     alias_method :signed?             , :signed
     alias_method :writable?           , :writable
-    
+
     def initialize(index, attributes = {})
       @index = index
       attributes.each do |key, value|

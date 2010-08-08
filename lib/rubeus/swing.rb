@@ -13,7 +13,7 @@ module Rubeus
        'ReadonlyableTableModel' => 'jp.rubybizcommons.rubeus.extensions.javax.swing.table',
       })
     class_to_package['DefaultStyledDocument'] ||= 'javax.swing.text' # Windowsにない?
-    
+
     def self.irb
       Rubeus::Awt.extend_with
       self.extend_with

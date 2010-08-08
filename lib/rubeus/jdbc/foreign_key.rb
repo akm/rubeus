@@ -15,20 +15,20 @@ module Rubeus::Jdbc
     #          * importedKeyCascade - 主キーの更新に合致するように、インポートされたキーを変更する
     #          * importedKeySetNull - インポートされたキーの主キーが更新されたら、NULL に変更する
     #          * importedKeySetDefault - インポートされたキーの主キーが更新されたら、デフォルト値に変更する
-    #          * importedKeyRestrict - importedKeyNoAction と同じ (ODBC 2.x との互換性のため) 
+    #          * importedKeyRestrict - importedKeyNoAction と同じ (ODBC 2.x との互換性のため)
     #  11. DELETE_RULE short => 主キーが削除されると、外部キーに起こる内容は次のとおりである
     #          * importedKeyNoAction - 主キーがインポートされたら、削除できない
     #          * importedKeyCascade - 削除されたキーをインポートする行を、削除する
     #          * importedKeySetNull - インポートされたキーの主キーが削除されたら、NULL に変更する
     #          * importedKeyRestrict - importedKeyNoAction と同じ (ODBC 2.x との互換性のため)
-    #          * importedKeySetDefault - インポートされたキーの主キーが削除されたら、デフォルト値に変更する 
+    #          * importedKeySetDefault - インポートされたキーの主キーが削除されたら、デフォルト値に変更する
     #  12. FK_NAME String => 外部キー名 (null の可能性がある)
     #  13. PK_NAME String => 主キー名 (null の可能性がある)
     #  14. DEFERRABILITY short => 外部キーの制限の評価はコミットまで延期できる
     #          * importedKeyInitiallyDeferred - 定義については SQL92 を参照
     #          * importedKeyInitiallyImmediate - 定義については SQL92 を参照
-    #          * importedKeyNotDeferrable - 定義については SQL92 を参照 
-    # 
+    #          * importedKeyNotDeferrable - 定義については SQL92 を参照
+    #
     # see also:
     # http://java.sun.com/javase/ja/6/docs/ja/api/java/sql/DatabaseMetaData.html#getExportedKeys(java.lang.String,%20java.lang.String,%20java.lang.String)
     # http://java.sun.com/javase/ja/6/docs/ja/api/java/sql/DatabaseMetaData.html#getImportedKeys(java.lang.String,%20java.lang.String,%20java.lang.String)
@@ -40,7 +40,7 @@ module Rubeus::Jdbc
 
     attr_accessor :fkcolumn_names, :pkcolumn_names
     attr_accessor :fktable, :pktable
-    
+
     def name
       fk_name.send(options[:name_case] || :to_s)
     end
@@ -48,19 +48,19 @@ module Rubeus::Jdbc
     def pretty_print_instance_variables
       super - [:@fktable, :@pktable]
     end
-    
+
     def length
       pkcolumn_names.length
     end
     alias_method :size, :length
-    
+
     def fkcolumns
       @fkcolumns ||= fkcolumn_names.map{|name| fktable.columns[name]}
     end
-    
+
     def pkcolumns
       @pkcolumns ||= pkcolumn_names.map{|name| pktable.columns[name]}
     end
-    
+
   end
 end

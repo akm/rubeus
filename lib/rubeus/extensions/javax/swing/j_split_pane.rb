@@ -8,7 +8,7 @@ module Rubeus::Extensions::Javax::Swing
         alias :new :new_with_rubeus
       end
     end
-    
+
     module ClassMethods
       def new_with_rubeus(new_orientation, *args, &block)
         if new_orientation.is_a?(Symbol)

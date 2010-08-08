@@ -7,7 +7,7 @@ module Rubeus::Awt
         alias :new :new_with_attributes
       end
     end
-    
+
     module ClassMethods
       def new_with_attributes(*args, &block)
         options = args.last.is_a?(Hash) ? args.pop : {}
@@ -27,12 +27,12 @@ module Rubeus::Awt
         end
         result
       end
-      
+
       def default_attributes(attributes = nil)
         self.default_attributes = attributes if attributes
         result = {}
         @class_to_default_attributes ||= {}
-        classes = self.ancestors.select{|klass| 
+        classes = self.ancestors.select{|klass|
           !klass.java_class.interface? and klass.respond_to?(:default_attributes)}
         classes.reverse.each do |klass|
           if attrs = @class_to_default_attributes[klass.java_class.name]
@@ -41,12 +41,12 @@ module Rubeus::Awt
         end
         result
       end
-      
+
       def default_attributes=(attributes)
         @class_to_default_attributes ||= {}
         @class_to_default_attributes[self.java_class.name] ||= (attributes || {})
       end
-      
+
     end
   end
 end

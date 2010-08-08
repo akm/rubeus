@@ -4,16 +4,16 @@ module Rubeus
       def out
         @out || $stderr
       end
-      
+
       def out=(value)
         @out = value
       end
     end
-    
+
     def log_if_verbose(*messages)
       return(block_given? ? yield : nil) unless self.verbose
       name = is_a?(Module) ? self.name : self.class.name
-      msg = "#{name} %s" % 
+      msg = "#{name} %s" %
         messages.map{|m| m.is_a?(Exception) ? ("#{m.to_s}\n%s" % m.backtrace.join("\n  ")) : m }.
         join("\n")
       @@indent ||= 0

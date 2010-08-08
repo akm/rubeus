@@ -3,13 +3,13 @@ module Rubeus::Awt
     def self.included(klass)
       klass.extend(ClassMethods)
     end
-    
+
     module ClassMethods
       def uncapitalize(str)
         str[0..0].downcase + str[1..-1]
       end
     end
-    
+
     def find_java_method(method_name, &block)
       klass = self.java_class
       while klass
@@ -54,8 +54,8 @@ module Rubeus::Awt
       filters = []
       [:if, :unless].each do |condition|
         [:any, :all].each do |joiner|
-          filters << build_hash_comparision(options, 
-            "#{condition.to_s}_#{joiner.to_s}".to_sym, 
+          filters << build_hash_comparision(options,
+            "#{condition.to_s}_#{joiner.to_s}".to_sym,
             "#{joiner.to_s}?", condition == :unless)
         end
       end
@@ -86,7 +86,7 @@ module Rubeus::Awt
         methods.map{|method| invokable_method(lister_methods, event_type, method)}.compact
       mod = Module.new do
         lister_methods.each do |listener_method|
-          if handling_methods.include?(listener_method) 
+          if handling_methods.include?(listener_method)
             define_method(listener_method){|*args| listener_block.call(*args)}
           else
             define_method(listener_method, &NULL_METHOD)
@@ -104,13 +104,13 @@ module Rubeus::Awt
     def listener_interface(event_type)
       java_event_name = event_type.to_s.camelize
       method_name = "add#{java_event_name}Listener"
-      java_method = 
-        find_java_method(method_name){|m|m.parameter_types.length == 1} || 
+      java_method =
+        find_java_method(method_name){|m|m.parameter_types.length == 1} ||
         find_java_method(method_name)
       raise "unsupported event '#{java_event_name}' for #{self.class.name}" unless java_method
       if java_method.parameter_types.length != 1
         method_name = "%s(%s)" % [java_method.name, java_method.parameter_types.map{|t|t.name}.join(',')]
-        raise "unsupported evnet method #{method_name} for #{java_method.declaring_class.name}" 
+        raise "unsupported evnet method #{method_name} for #{java_method.declaring_class.name}"
       end
       java_method.parameter_types.first
     end

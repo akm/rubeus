@@ -12,11 +12,11 @@ module Rubeus
       'ResultSetMetaData' => 'java.sql',
       'Statement' => 'java.sql'
       )
-    
+
     def self.irb
       self.extend_with
     end
-    
+
     # auto_load :MetaElement, "rubeus/jdbc/meta_element"
     # auto_load :Table, "rubeus/jdbc/table"
     # auto_load :Column, "rubeus/jdbc/column"

@@ -2,7 +2,7 @@ Rubeus::Awt.depend_on("Dimension")
 
 module Rubeus::Awt
   module Setters
-    
+
     def self.included(base)
       base.module_eval do
         alias_method :set_preferred_size, :set_preferred_size_rubeus

@@ -18,7 +18,7 @@ module Rubeus::Extensions::Javax::Swing
 
     if ENV_JAVA["java.specification.version"] == "1.6"
       def set_size(*args)
-        java_send :setSize, [java.awt.Dimension], 
+        java_send :setSize, [java.awt.Dimension],
           Rubeus::Awt::Dimension.create(*args)
       end
     end

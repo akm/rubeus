@@ -8,7 +8,7 @@ require "active_support/core_ext/string"
 
 Kernel.module_eval <<-EOS
   def jp
-    JavaUtilities.get_package_module_dot_format('jp')    
+    JavaUtilities.get_package_module_dot_format('jp')
   end
 EOS
 
@@ -16,9 +16,9 @@ module Rubeus
   VERSION = '0.0.9'
   EMAIL_GROUP = 'rubeus@googlegroups.com'
   WEB_SITE = 'http://code.google.com/p/rubeus/'
-  
+
   autoload :Verbosable, "rubeus/verboseable"
-  
+
   autoload :Awt, "rubeus/awt"
   autoload :Swing, "rubeus/swing"
   autoload :Jdbc, "rubeus/jdbc"

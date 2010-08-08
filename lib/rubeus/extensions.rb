@@ -6,10 +6,10 @@ module Rubeus
 
     RUBEUS_EXTRA_PACKAGE = "jp.rubybizcommons.rubeus.extensions".freeze
     RUBEUS_EXTRA_PACKAGE_PARTS = RUBEUS_EXTRA_PACKAGE.split('.').freeze
-    
+
     class << self
       def verbose; ::Rubeus.verbose; end
-      
+
       private
       def package_parts(java_fqn_or_parts)
         parts = java_fqn_or_parts.is_a?(Array) ? java_fqn_or_parts : java_fqn_or_parts.split('.')
@@ -18,9 +18,9 @@ module Rubeus
         end
         parts
       end
-      
+
       public
-      
+
       def path_for(java_fqn_or_parts)
         parts = package_parts(java_fqn_or_parts)
         "rubeus/extensions/%s" % parts.map{|part|part.underscore}.join('/')
@@ -52,7 +52,7 @@ module Rubeus
           return nil
         end
       end
-      
+
       def apply_for(java_fqn)
         log_if_verbose("apply_for(#{java_fqn.inspect})") do
           extension = self.find_for(java_fqn)
@@ -68,7 +68,7 @@ module Rubeus
           end
         end
       end
-      
+
     end
     extend ::Rubeus::Verboseable
   end

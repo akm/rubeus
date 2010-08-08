@@ -7,7 +7,7 @@ module Rubeus::Awt
         alias :new :new_with_nestable
       end
     end
-    
+
     class Context
       def self.container_class_names
         @container_class_names ||= []
@@ -38,13 +38,13 @@ module Rubeus::Awt
           @action = former_action
         end
       end
-      
+
       def self.container
         @container
       end
     end
-    
-    
+
+
     module ClassMethods
       def new_with_nestable(*args, &block)
         object = self.new_without_nestable(*args)

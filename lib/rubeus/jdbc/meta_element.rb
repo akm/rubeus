@@ -10,24 +10,24 @@ module Rubeus::Jdbc
       end
       @options = options ? options.dup : {}
     end
-    
+
     def pretty_print_instance_variables
       self.instance_variables.sort.map{|v| v.to_sym} - [:@meta_data, :@jdbc_info, :@table]
     end
-    
+
   end
-  
+
   module FullyQualifiedNamed
     FQN_ATTRS = [:table_cat, :table_schem, :table_name]
     FQN_ATTR_STRS = FQN_ATTRS.map{|attr| attr.to_s.upcase}
-    
+
     attr_accessor *FQN_ATTRS
-    
+
     def fully_qualified_name
       [table_cat, table_schem, table_name]
     end
     alias_method :fqn, :fully_qualified_name
-    
+
     def same_fqn?(element)
       if element.is_a?(Hash)
         FQN_ATTR_STRS.all?{|attr|
@@ -50,7 +50,7 @@ module Rubeus::Jdbc
       super(meta_data, *args, &block)
       @table = table
     end
-    
+
     def pretty_print_instance_variables
       super - [:@table]
     end

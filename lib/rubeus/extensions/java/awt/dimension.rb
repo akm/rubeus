@@ -3,7 +3,7 @@ module Rubeus::Extensions::Java::Awt
     def self.included(base)
       base.extend ClassMethods
     end
-    
+
     module ClassMethods
       def create(*args)
         values = args

@@ -6,7 +6,7 @@ module TestSqlHelper
   def teardown_connection
     @con.close
   end
-  
+
   def close_if_no_statement(statement = nil)
     must_be_closed = statement.nil?
     statement ||= @con.create_statement
@@ -16,7 +16,7 @@ module TestSqlHelper
       statement.close if must_be_closed
     end
   end
-  
+
   def drop_table_if_exist(table_name, statement = nil)
     close_if_no_statement(statement) do |stmt|
       begin
@@ -26,7 +26,7 @@ module TestSqlHelper
       end
     end
   end
-  
+
   def create_table_after_drop(create_ddl, statement = nil)
     create_ddls = create_ddl.split(/\;/mi).map{|ddl| ddl.strip }.select{|ddl| !(ddl.nil? || ddl.empty?) }
     table_names = create_ddls.map{|ddl| ddl.scan(/^\s*CREATE TABLE\s+?(.+?)[\s\($]/mi)}
@@ -39,5 +39,5 @@ module TestSqlHelper
       end
     end
   end
-  
+
 end

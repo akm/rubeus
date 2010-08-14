@@ -24,32 +24,34 @@ module Rubeus::Extensions::Java::Sql
     end
 
     class Loader
-      def self.entries
-        @entries ||= []
-      end
-
-      def self.entry(name, pattern, driver, driver_type = :unknown, options = nil, &block)
-        result = entry_with(name) do |db|
-          db.pattern(pattern, driver, driver_type)
-          db.options = options
+      class << self
+        def entries
+          @entries ||= []
         end
-        result.instance_eval(&block) if block_given?
-        result
-      end
 
-      def self.entry_with(name, &block)
-        result = self.new(name)
-        result.instance_eval(&block) if block_given?
-        entries << result
-        result
-      end
-
-      def self.setup_for(url, setup_options = nil)
-        entries.each do |entry|
-          driver = entry.setup_for(url, setup_options)
-          return driver if driver
+        def entry(name, pattern, driver, driver_type = :unknown, options = nil, &block)
+          result = entry_with(name) do |db|
+            db.pattern(pattern, driver, driver_type)
+            db.options = options
+          end
+          result.instance_eval(&block) if block_given?
+          result
         end
-        raise ArgumentError, "DriverManager catalog not found for #{url}"
+
+        def entry_with(name, &block)
+          result = self.new(name)
+          result.instance_eval(&block) if block_given?
+          entries << result
+          result
+        end
+
+        def setup_for(url, setup_options = nil)
+          entries.each do |entry|
+            driver = entry.setup_for(url, setup_options)
+            return driver if driver
+          end
+          raise ArgumentError, "DriverManager catalog not found for #{url}"
+        end
       end
 
       attr_reader :name
@@ -117,7 +119,7 @@ module Rubeus::Extensions::Java::Sql
       # jdbc:odbc:DataSourceName
       # Type1はODBCを使用してデータベースにアクセス。ODBCドライバのインストールと
       # ODBCアドミニストレータ設定が必要。DataSourceNameにはODBCで設定した名前を入れる。
-      entry("ODBC", /jdbc:odbc:.*/, "sun.jdbc.odbc.JdbcOdbcDriver", :type1)
+      entry("ODBC", /^jdbc:odbc:/, "sun.jdbc.odbc.JdbcOdbcDriver", :type1)
 
       # DB2
       # Type2  COM.ibm.db2.jdbc.app.DB2Driver (v8.1まで)
@@ -136,9 +138,9 @@ module Rubeus::Extensions::Java::Sql
       # jdbc:db2://127.0.0.1:50000/DataBaseName
       # DB2バージョン8.1からサポートされた。DB2クライアントのインストールは不要。
       entry_with "DB2" do |db|
-        db.pattern(/jdbc:db2:\/\/.*\/.*/, 'com.ibm.db2.jcc.DB2Driver'     , :type4)
-        db.pattern(/jdbc:db2:\/\/.*\/.*/, 'COM.ibm.db2.jdbc.net.DB2Driver', :type3)
-        db.pattern(/jdbc:db2:.*/        , 'COM.ibm.db2.jdbc.app.DB2Driver', :type2)
+        db.pattern(/^jdbc:db2:/, 'com.ibm.db2.jcc.DB2Driver'     , :type4)
+        db.pattern(/^jdbc:db2:/, 'COM.ibm.db2.jdbc.net.DB2Driver', :type3)
+        db.pattern(/^jdbc:db2:/  , 'COM.ibm.db2.jdbc.app.DB2Driver', :type2)
       end
 
       # Oracle
@@ -153,9 +155,9 @@ module Rubeus::Extensions::Java::Sql
       # tnsnames.oraファイルにデータソースの設定を書く。Oracleクライアントが必要。
       # 10gは9i用クライアントでも使用可能のようだ。
       entry_with "Oracle" do |db|
-        db.pattern(/jdbc:oracle:thin:@.*(:.*)*(:.*)*/, 'oracle.jdbc.driver.OracleDriver', :type4)
-        db.pattern(/jdbc:oracle:oci8:@.*/            , 'oracle.jdbc.driver.OracleDriver', :type2)
-        db.pattern(/jdbc:oracle:oci:@.*/             , 'oracle.jdbc.driver.OracleDriver', :type2)
+        db.pattern(/^jdbc:oracle:thin:@/, 'oracle.jdbc.driver.OracleDriver', :type4)
+        db.pattern(/^jdbc:oracle:oci8:@/, 'oracle.jdbc.driver.OracleDriver', :type2)
+        db.pattern(/^jdbc:oracle:oci:@/ , 'oracle.jdbc.driver.OracleDriver', :type2)
       end
 
       # SQL Server 2000
@@ -163,32 +165,32 @@ module Rubeus::Extensions::Java::Sql
       # jdbc:microsoft:sqlserver://127.0.0.1:1433;DatabaseName=DBName
       # MS製なのでWindows版しかないが、導入が容易でバランスのとれたチューニングが施されている。
       # このドライバはMSDE 2000でも使用可能。
-      entry("SQL Server 2000", /jdbc:microsoft:sqlserver:.*/, "com.microsoft.jdbc.sqlserver.SQLServerDriver", :type4)
+      entry("SQL Server 2000", /^jdbc:microsoft:sqlserver:/, "com.microsoft.jdbc.sqlserver.SQLServerDriver", :type4)
 
       # SQL Server 2005
       # Type4  com.microsoft.sqlserver.jdbc.SQLServerDriver
       # jdbc:sqlserver://localhost:1433;DatabaseName=DBName
       # SQLServer 2005。旧バージョンからドライバクラスもURLも微妙に変更されているので注意。参考
-      entry("SQL Server 2005", /jdbc:sqlserver:.*/, "com.microsoft.sqlserver.jdbc.SQLServerDriver", :type4)
+      entry("SQL Server 2005", /^jdbc:sqlserver:/, "com.microsoft.sqlserver.jdbc.SQLServerDriver", :type4)
 
       # Firebird
       # Type 4  org.firebirdsql.jdbc.FBDriver
       # jdbc:firebirdsql://127.0.0.1:3050/DataBasePath
       # オープンソースのRDB。DataBasePathにはサーバ上のデータベースファイル(.gdb)への絶対パスを指定するらしい。
-      entry("Firebird", /jdbc:firebirdsql:.*/, "org.firebirdsql.jdbc.FBDriver", :type4)
+      entry("Firebird", /^jdbc:firebirdsql:/, "org.firebirdsql.jdbc.FBDriver", :type4)
 
       # MySQL
       # Type 4  com.mysql.jdbc.Driver
       # jdbc:mysql://127.0.0.1:3306/DBName
       # GPLライセンスと商用ライセンスで利用できるRDB。Movable Type等のBlogツールでも採用されている。
-      entry("MySQL", /jdbc:mysql:.*/, "com.mysql.jdbc.Driver", :type4,
+      entry("MySQL", /^jdbc:mysql:/, "com.mysql.jdbc.Driver", :type4,
         :gem => "jdbc-mysql", :gem_require => "jdbc/mysql")
 
       # PostgreSQL
       # Type 4  org.postgresql.Driver
       # jdbc:postgresql://127.0.0.1:5432/DBName
       # BSDライセンスで配布されており、商用でも無償で使用可能。中小規模システム、個人用DBとしてMySQLと並んで人気。
-      entry("PostgreSQL", /jdbc:postgresql:.*/, "org.postgresql.Driver", :type4,
+      entry("PostgreSQL", /^jdbc:postgresql:/, "org.postgresql.Driver", :type4,
         :gem => "jdbc-postgres", :gem_require => "jdbc/postgres")
 
       # HSQLDB  org.hsqldb.jdbcDriver
@@ -204,16 +206,16 @@ module Rubeus::Extensions::Java::Sql
       # jdbc:hsqldb:mem:databasename
       # HSQLDBをインメモリモードで起動する。インメモリモードはスタンドアロンモードと同じだがデータを永続化しない。JavaVMを終了するとデータが失われる。
       entry_with "HSQLDB" do |db|
-        db.pattern(/jdbc:hsqldb:hsql:.*/, "org.hsqldb.jdbcDriver")
-        db.pattern(/jdbc:hsqldb:file:.*/, "org.hsqldb.jdbcDriver")
-        db.pattern(/jdbc:hsqldb:mem:.*/ , "org.hsqldb.jdbcDriver")
+        db.pattern(/^jdbc:hsqldb:hsql:/, "org.hsqldb.jdbcDriver")
+        db.pattern(/^jdbc:hsqldb:file:/, "org.hsqldb.jdbcDriver")
+        db.pattern(/^jdbc:hsqldb:mem:/ , "org.hsqldb.jdbcDriver")
         db.options = {:gem => "jdbc-hsqldb", :gem_require => "jdbc/hsqldb"}
       end
 
       # Derby  org.apache.derby.jdbc.EmbeddedDriver
       # jdbc:derby:databasename;create=true
       # Java言語で書かれた組み込み用のデータベース。create=trueはオプションで、databasenameが見つからない場合に新規データベースを作成する。
-      entry("Derby", /jdbc:derby:.*/, "org.apache.derby.jdbc.EmbeddedDriver", :unknown,
+      entry("Derby", /^jdbc:derby:/, "org.apache.derby.jdbc.EmbeddedDriver", :unknown,
         :gem => 'jdbc-derby', :gem_require => [
           'jdbc/derby',
           (ENV_JAVA['java.specification.version'] > '1.5' ? File.join(ENV_JAVA['java.home'], 'db', 'lib', 'derby.jar') : nil)
@@ -223,7 +225,7 @@ module Rubeus::Extensions::Java::Sql
       # Type4  com.openbase.jdbc.ObDriver
       # jdbc:openbase://localhost/DataBaseName
       # MacOSXの前身NEXTSTEP/OPENSTEP上で開発されたRDBMSらしい。Linux版、Windows版もあるようだ。
-      entry("OpenBase", /jdbc:openbase:.*/, "com.openbase.jdbc.ObDriver", :type4)
+      entry("OpenBase", /^jdbc:openbase:/, "com.openbase.jdbc.ObDriver", :type4)
 
       # H2   org.h2.Driver
       # jdbc:h2:tcp://localhost:9092/DataBasePath
@@ -232,8 +234,8 @@ module Rubeus::Extensions::Java::Sql
       # jdbc:h2:DataBasePath
       # 組み込みDBとして使用する場合のURL。
       entry_with "H2" do |db|
-        db.pattern(/jdbc:h2:tcp:.*/, "org.h2.Driver")
-        db.pattern(/jdbc:h2:.*/    , "org.h2.Driver")
+        db.pattern(/^jdbc:h2:tcp:/, "org.h2.Driver")
+        db.pattern(/^jdbc:h2:/    , "org.h2.Driver")
         db.options = {:gem => "jdbc-h2", :gem_require => "jdbc/h2"}
       end
 
@@ -247,7 +249,7 @@ module Rubeus::Extensions::Java::Sql
       # Type4(?)  org.sqlite.JDBC
       # jdbc:sqlite:databasefile_path
       # SQLiteにアクセスするJDBCドライバ。NestedVMというものをつかってPure Javaのドライバとしている？らしい…
-      entry("SQLite", /jdbc:sqlite:.*/, "org.sqlite.JDBC", :type4,
+      entry("SQLite", /^jdbc:sqlite:/, "org.sqlite.JDBC", :type4,
         :gem => "jdbc-sqlite3", :gem_require => "jdbc/sqlite3")
     end
 

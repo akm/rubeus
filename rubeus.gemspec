@@ -59,6 +59,10 @@ Gem::Specification.new do |s|
      "lib/rubeus/extensions/java/awt/component.rb",
      "lib/rubeus/extensions/java/awt/container.rb",
      "lib/rubeus/extensions/java/awt/dimension.rb",
+     "lib/rubeus/extensions/java/lang.rb",
+     "lib/rubeus/extensions/java/lang/reflect.rb",
+     "lib/rubeus/extensions/java/lang/reflect/accessible_object.rb",
+     "lib/rubeus/extensions/java/lang/reflect/method.rb",
      "lib/rubeus/extensions/java/sql.rb",
      "lib/rubeus/extensions/java/sql/connection.rb",
      "lib/rubeus/extensions/java/sql/database_meta_data.rb",
@@ -94,8 +98,10 @@ Gem::Specification.new do |s|
      "lib/rubeus/jdbc/primary_key.rb",
      "lib/rubeus/jdbc/result_set_column.rb",
      "lib/rubeus/jdbc/table.rb",
+     "lib/rubeus/reflection.rb",
      "lib/rubeus/swing.rb",
      "lib/rubeus/util.rb",
+     "lib/rubeus/util/java_method_name.rb",
      "lib/rubeus/util/name_access_array.rb",
      "lib/rubeus/verboseable.rb",
      "rmaven.yml",
@@ -124,7 +130,18 @@ Gem::Specification.new do |s|
      "test/rubeus/extensions/javax/swing/test_j_table.rb",
      "test/rubeus/extensions/javax/swing/test_j_text_field.rb",
      "test/rubeus/extensions/javax/swing/test_timer.rb",
-     "test/rubeus/test_extensions.rb"
+     "test/rubeus/reflection/test_method_modifier.rb",
+     "test/rubeus/test_extensions.rb",
+     "test/rubeus_test.jar",
+     "test/test_all.rb",
+     "test_jar/.classpath",
+     "test_jar/.gitignore",
+     "test_jar/.project",
+     "test_jar/mvn_plugins.yml",
+     "test_jar/pom.xml",
+     "test_jar/src/main/java/jp/rubybizcommons/rubeus/test/reflection/VariousFields.java",
+     "test_jar/src/main/java/jp/rubybizcommons/rubeus/test/reflection/VariousMethods.java",
+     "test_jar/src/test/java/jp/rubybizcommons/rubeus/test/AppTest.java"
   ]
   s.homepage = %q{http://code.google.com/p/rubeus/}
   s.rdoc_options = ["--charset=UTF-8"]

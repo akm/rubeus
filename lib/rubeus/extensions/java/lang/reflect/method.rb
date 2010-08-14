@@ -1,5 +1,3 @@
-Rubeus::Reflection.depend_on("AccessibleObject")
-
 module Rubeus::Extensions::Java::Lang::Reflect
   module Method
     MODIFIER = java.lang.reflect.Modifier

@@ -29,18 +29,17 @@ module Rubeus::Extensions::Java::Sql
           @entries ||= []
         end
 
-        def entry(name, pattern, driver, driver_type = :unknown, options = nil, &block)
-          result = entry_with(name) do |db|
-            db.pattern(pattern, driver, driver_type)
-            db.options = options
-          end
-          result.instance_eval(&block) if block_given?
-          result
-        end
-
-        def entry_with(name, &block)
+        def entry(name, *args, &block)
           result = self.new(name)
-          result.instance_eval(&block) if block_given?
+          if block_given?
+            result.instance_eval(&block)
+          else
+            pattern, driver, driver_type, options = *args
+            result.instance_eval do |db|
+              db.pattern(pattern, driver, driver_type || :unknown)
+              db.options = options
+            end
+          end
           entries << result
           result
         end
@@ -54,7 +53,7 @@ module Rubeus::Extensions::Java::Sql
         end
       end
 
-      attr_reader :name
+      attr_reader :name, :patterns
 
       def initialize(name)
         @name = name
@@ -137,7 +136,7 @@ module Rubeus::Extensions::Java::Sql
       # Type4 com.ibm.db2.jcc.DB2Driver
       # jdbc:db2://127.0.0.1:50000/DataBaseName
       # DB2バージョン8.1からサポートされた。DB2クライアントのインストールは不要。
-      entry_with "DB2" do |db|
+      entry "DB2" do |db|
         db.pattern(/^jdbc:db2:/, 'com.ibm.db2.jcc.DB2Driver'     , :type4)
         db.pattern(/^jdbc:db2:/, 'COM.ibm.db2.jdbc.net.DB2Driver', :type3)
         db.pattern(/^jdbc:db2:/  , 'COM.ibm.db2.jdbc.app.DB2Driver', :type2)
@@ -154,7 +153,7 @@ module Rubeus::Extensions::Java::Sql
       # jdbc:oracle:oci:@TNS (for Oracle 9i or 10g)
       # tnsnames.oraファイルにデータソースの設定を書く。Oracleクライアントが必要。
       # 10gは9i用クライアントでも使用可能のようだ。
-      entry_with "Oracle" do |db|
+      entry "Oracle" do |db|
         db.pattern(/^jdbc:oracle:thin:@/, 'oracle.jdbc.driver.OracleDriver', :type4)
         db.pattern(/^jdbc:oracle:oci8:@/, 'oracle.jdbc.driver.OracleDriver', :type2)
         db.pattern(/^jdbc:oracle:oci:@/ , 'oracle.jdbc.driver.OracleDriver', :type2)
@@ -205,7 +204,7 @@ module Rubeus::Extensions::Java::Sql
       # org.hsqldb.jdbcDriver
       # jdbc:hsqldb:mem:databasename
       # HSQLDBをインメモリモードで起動する。インメモリモードはスタンドアロンモードと同じだがデータを永続化しない。JavaVMを終了するとデータが失われる。
-      entry_with "HSQLDB" do |db|
+      entry "HSQLDB" do |db|
         db.pattern(/^jdbc:hsqldb:hsql:/, "org.hsqldb.jdbcDriver")
         db.pattern(/^jdbc:hsqldb:file:/, "org.hsqldb.jdbcDriver")
         db.pattern(/^jdbc:hsqldb:mem:/ , "org.hsqldb.jdbcDriver")
@@ -233,7 +232,7 @@ module Rubeus::Extensions::Java::Sql
       # org.h2.Driver
       # jdbc:h2:DataBasePath
       # 組み込みDBとして使用する場合のURL。
-      entry_with "H2" do |db|
+      entry "H2" do |db|
         db.pattern(/^jdbc:h2:tcp:/, "org.h2.Driver")
         db.pattern(/^jdbc:h2:/    , "org.h2.Driver")
         db.options = {:gem => "jdbc-h2", :gem_require => "jdbc/h2"}
@@ -243,7 +242,7 @@ module Rubeus::Extensions::Java::Sql
       # Type4  com.sybase.jdbc.SybDriver
       # jdbc:sybase:Tds:localhost:8001/databasename
       # 一時期MSSQLServerとして提供されていたこともあるRDBMS。そのためか両製品をサポートしているサードパーティ製やオープンソースのドライバがある。
-      entry("Sybase ASE", /jdbc:sybase:Tds:.*/, "com.sybase.jdbc.SybDriver", :type4)
+      entry("Sybase ASE", /^jdbc:sybase:Tds:/, "com.sybase.jdbc.SybDriver", :type4)
 
       # SQLite
       # Type4(?)  org.sqlite.JDBC

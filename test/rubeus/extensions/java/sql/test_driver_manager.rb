@@ -12,7 +12,6 @@ class TestDriverManager < Test::Unit::TestCase
     assert_nothing_raised do
       @con = Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test_db;create = true", "", "")
     end
-
     if @con
       assert_equal(false, @con.closed?)
       @con.close
@@ -33,5 +32,13 @@ class TestDriverManager < Test::Unit::TestCase
     end
     assert_nil(con)
   end
-end
 
+  def test_mysql_loader_entry
+    entry = Rubeus::Jdbc::DriverManager::Loader.entries.detect{|entry| entry.name == "MySQL"}
+    assert entry
+    assert_equal 1, entry.patterns.length
+    driver_name = entry.driver_for("jdbc:mysql://127.0.0.1")
+    assert_equal "com.mysql.jdbc.Driver",  driver_name
+  end
+
+end

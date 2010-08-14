@@ -4,3 +4,8 @@ java:
   group_id: jp.rubybizcommons.rubeus
   rake_prefix: java
   pom_dir: java
+test_jar:
+  artifact_id: java_supply
+  group_id: jp.rubybizcommons.rubeus.test
+  rake_prefix: test_jar
+  pom_dir: test_jar

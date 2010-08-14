@@ -1,3 +1,5 @@
+require 'rubeus/util'
+
 module Rubeus::Util
   class NameAccessArray < Array
     def initialize(*args)

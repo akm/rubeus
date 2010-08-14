@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["akimatter"]
-  s.date = %q{2010-07-25}
+  s.date = %q{2010-08-14}
   s.description = %q{Rubeus provides you an easy access to Java objects from Ruby scripts on JRuby}
   s.email = %q{rubeus@googlegroups.com}
   s.executables = ["jirb_rubeus", "jirb_rubeus.bat"]
@@ -156,6 +156,7 @@ Gem::Specification.new do |s|
      "test/rubeus/extensions/javax/swing/test_j_text_field.rb",
      "test/rubeus/extensions/javax/swing/test_timer.rb",
      "test/rubeus/extensions/javax/swing/table/test_default_table_model.rb",
+     "test/rubeus/reflection/test_method_modifier.rb",
      "examples/jdbc_example.rb",
      "examples/notepad.rb",
      "examples/rubeus_swing_example01.rb",
@@ -172,11 +173,14 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<activesupport>, ["= 2.1.2"])
+      s.add_development_dependency(%q<rcov>, [">= 0.9.8"])
     else
       s.add_dependency(%q<activesupport>, ["= 2.1.2"])
+      s.add_dependency(%q<rcov>, [">= 0.9.8"])
     end
   else
     s.add_dependency(%q<activesupport>, ["= 2.1.2"])
+    s.add_dependency(%q<rcov>, [">= 0.9.8"])
   end
 end
 

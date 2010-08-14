@@ -61,7 +61,6 @@ Gem::Specification.new do |s|
      "lib/rubeus/extensions/java/awt/dimension.rb",
      "lib/rubeus/extensions/java/lang.rb",
      "lib/rubeus/extensions/java/lang/reflect.rb",
-     "lib/rubeus/extensions/java/lang/reflect/accessible_object.rb",
      "lib/rubeus/extensions/java/lang/reflect/method.rb",
      "lib/rubeus/extensions/java/sql.rb",
      "lib/rubeus/extensions/java/sql/connection.rb",

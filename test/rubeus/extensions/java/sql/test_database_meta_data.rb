@@ -21,18 +21,18 @@ class TestDatabaseMetaData < Test::Unit::TestCase
           DEPART_TIME TIME,
           DEST_AIRPORT CHAR(3),
           ARRIVE_TIME TIME,
-          MEAL CHAR(1) CONSTRAINT MEAL_CONSTRAINT 
+          MEAL CHAR(1) CONSTRAINT MEAL_CONSTRAINT
           CHECK (MEAL IN ('B', 'L', 'D', 'S')),
           PRIMARY KEY (FLIGHT_ID, SEGMENT_NUMBER)
           );
         CREATE TABLE FLTAVAIL(
-          FLIGHT_ID CHAR(6) NOT NULL, 
-          SEGMENT_NUMBER INT NOT NULL, 
-          FLIGHT_DATE DATE NOT NULL, 
+          FLIGHT_ID CHAR(6) NOT NULL,
+          SEGMENT_NUMBER INT NOT NULL,
+          FLIGHT_DATE DATE NOT NULL,
           ECONOMY_SEATS_TAKEN INT,
           BUSINESS_SEATS_TAKEN INT,
-          FIRSTCLASS_SEATS_TAKEN INT, 
-          CONSTRAINT FLTAVAIL_PK PRIMARY KEY (FLIGHT_ID, SEGMENT_NUMBER), 
+          FIRSTCLASS_SEATS_TAKEN INT,
+          CONSTRAINT FLTAVAIL_PK PRIMARY KEY (FLIGHT_ID, SEGMENT_NUMBER),
           CONSTRAINT FLTS_FK
           FOREIGN KEY (FLIGHT_ID, SEGMENT_NUMBER)
           REFERENCES Flights (FLIGHT_ID, SEGMENT_NUMBER)
@@ -62,7 +62,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
       EOS
     end
   end
-  
+
   def teardown
     teardown_connection
   end
@@ -81,22 +81,22 @@ class TestDatabaseMetaData < Test::Unit::TestCase
     puts e.backtrace.join("\n  ")
      raise e
   end
-  
+
   def assert_column(table, name, type, size, nullable)
     column = table.columns[name]
     assert_not_nil column, "column '#{name}' not found"
-    assert_equal(java.sql.Types.const_get(type.to_s.upcase), column.data_type, 
+    assert_equal(java.sql.Types.const_get(type.to_s.upcase), column.data_type,
       "column '#{name}' type expected #{java.sql.Types.const_get(type.to_s.upcase).inspect} but #{column.data_type.inspect}")
-    assert_equal(size, column.size, 
+    assert_equal(size, column.size,
       "column '#{name}' size expected #{size.inspect} but #{column.size.inspect}")
-    assert_equal(nullable, column.nullable?, 
+    assert_equal(nullable, column.nullable?,
       "column '#{name}' nullable expected #{nullable.inspect} but #{column.nullable?.inspect}")
-    assert_equal(nullable ? 
-      java.sql.DatabaseMetaData.columnNullable : 
+    assert_equal(nullable ?
+      java.sql.DatabaseMetaData.columnNullable :
       java.sql.DatabaseMetaData.columnNoNulls, column.nullable)
     assert_equal column, table[name]
   end
-  
+
   def test_table_object_columns
     tables = @con.meta_data.tables(:schema => "APP", :name_case => :downcase)
     #
@@ -139,7 +139,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
     puts e.backtrace.join("\n  ")
     raise e
   end
-  
+
   def assert_pk(table, names)
     assert_equal names.length, table.primary_keys.length
     assert_equal names, table.pks.map{|k| k.name}
@@ -185,7 +185,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
       end
     end
   end
-  
+
   def test_table_objects_pk
     tables = @con.meta_data.tables(:schema => "APP", :name_case => :downcase)
     assert_pk(tables['flights'], %w(flight_id segment_number))
@@ -194,12 +194,12 @@ class TestDatabaseMetaData < Test::Unit::TestCase
     assert_pk(tables['metropolitan'], %w(hotel_id))
     assert_pk(tables['test1'], [])
   end
-  
+
   def assert_index(table, index_name, key_names, asc_descs)
     assert_equal key_names, table.indexes[index_name].keys.map{|k| k.name}
     assert_equal asc_descs, table.indexes[index_name].keys.map{|k| k.asc?}
   end
-  
+
   def test_table_objects_index
     tables = @con.meta_data.tables(:schema => "APP", :name_case => :downcase)
     # assert_equal %w(idx_flight_01 idx_flight_02 idx_flight_03), tables['flights'].indexes.map{|idx| idx.name}
@@ -208,7 +208,7 @@ class TestDatabaseMetaData < Test::Unit::TestCase
     assert_index(tables['flights'], 'idx_flight_02', %w(orig_airport depart_time), [true, false])
     assert_index(tables['flights'], 'idx_flight_03', %w(dest_airport arrive_time), [true, false])
     # assert_equal 0, tables['fltavail'].indexes.length
-    
+
     # assert_equal 1, tables['cities'].indexes.length
     assert_index(tables['cities'], 'idx_cities_01', %w(city_name), [true])
     # assert_equal 1, tables['metropolitan'].indexes.length
@@ -216,18 +216,18 @@ class TestDatabaseMetaData < Test::Unit::TestCase
 
     # assert_equal 0, tables['test1'].indexes.length
   end
-  
+
   def assert_fk(fk_name, pktable, pkcolumn_names, fktable, fkcolumn_names)
     imported_key = fktable.imported_keys[fk_name]
     exported_key = pktable.exported_keys[fk_name]
     assert_equal fk_name, imported_key.name
     assert_equal fk_name, exported_key.name
-    
+
     assert_equal pktable.name, imported_key.pktable.name
     assert_equal fktable.name, imported_key.fktable.name
     assert_equal pktable.name, exported_key.pktable.name
     assert_equal fktable.name, exported_key.fktable.name
-    
+
     assert_equal pkcolumn_names.length, imported_key.length
     assert_equal fkcolumn_names.length, exported_key.length
     assert_equal imported_key.length, exported_key.length
@@ -243,15 +243,15 @@ class TestDatabaseMetaData < Test::Unit::TestCase
       end
     end
   end
-  
+
   def test_table_objects_imported_keys_and_exported_keys
     tables = @con.meta_data.tables(:schema => "APP", :name_case => :downcase)
-    assert_fk('flts_fk', 
+    assert_fk('flts_fk',
       tables['flights'], %w(flight_id segment_number),
       tables['fltavail'], %w(flight_id segment_number))
-    assert_fk('metro_fk', 
+    assert_fk('metro_fk',
       tables['cities'], %w(id),
       tables['metropolitan'], %w(city_id))
   end
-  
+
 end

@@ -29,6 +29,10 @@ module Rubeus::Jdbc
     attr_accessor :pluralize_table_name
     attr_accessor :columns
 
+    def inspect
+      "#<#{self.class} #{name}(%s)>" % columns.map(&:name).join(',')
+    end
+
     def name
       self.table_name.send(options[:name_case] || :to_s)
     end

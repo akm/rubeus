@@ -1,10 +1,12 @@
 require 'test/unit'
 require 'rubygems'
 require 'rubeus'
+# gem "activesupport"
+require 'active_support/test_case'
 require 'test/rubeus/extensions/java/sql/test_sql_helper'
 
 # Test for lib/rubeus/extensions/java/sql/database_meta_data.rb
-class TestDatabaseMetaData < Test::Unit::TestCase
+class TestDatabaseMetaData < ActiveSupport::TestCase
   include TestSqlHelper
 
   def setup
@@ -79,7 +81,16 @@ class TestDatabaseMetaData < Test::Unit::TestCase
   rescue => e
     puts e.to_s
     puts e.backtrace.join("\n  ")
-     raise e
+    raise e
+  end
+
+  def test_table_inspect_with_downcase
+    tables = @con.meta_data.tables(:schema => "APP", :name_case => :downcase)
+    assert_equal "#<Rubeus::Jdbc::Table flights(flight_id,segment_number,orig_airport,depart_time,dest_airport,arrive_time,meal)>", tables['flights'].inspect
+    assert_equal "#<Rubeus::Jdbc::Table fltavail(flight_id,segment_number,flight_date,economy_seats_taken,business_seats_taken,firstclass_seats_taken)>", tables['fltavail'].inspect
+    assert_equal "#<Rubeus::Jdbc::Table cities(id,city_name)>", tables['cities'].inspect
+    assert_equal "#<Rubeus::Jdbc::Table metropolitan(hotel_id,hotel_name,city_id)>", tables['metropolitan'].inspect
+    assert_equal "#<Rubeus::Jdbc::Table test1(id,name)>", tables['test1'].inspect
   end
 
   def assert_column(table, name, type, size, nullable)

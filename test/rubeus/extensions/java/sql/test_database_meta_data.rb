@@ -290,9 +290,14 @@ class TestDatabaseMetaData < ActiveSupport::TestCase
     assert_fk('flts_fk',
       tables['flights'], %w(flight_id segment_number),
       tables['fltavail'], %w(flight_id segment_number))
+    assert_equal("#<Rubeus::Jdbc::ForeignKey flts_fk fltavail(flight_id,segment_number)=>flights(flight_id,segment_number)>",
+      tables['fltavail'].foreign_keys['flts_fk'].inspect)
+
     assert_fk('metro_fk',
       tables['cities'], %w(id),
       tables['metropolitan'], %w(city_id))
+    assert_equal("#<Rubeus::Jdbc::ForeignKey metro_fk metropolitan(city_id)=>cities(id)>",
+      tables['metropolitan'].foreign_keys['metro_fk'].inspect)
   end
 
 end

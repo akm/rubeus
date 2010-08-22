@@ -41,6 +41,11 @@ module Rubeus::Jdbc
     attr_accessor :fkcolumn_names, :pkcolumn_names
     attr_accessor :fktable, :pktable
 
+    def inspect
+      "#<#{self.class.name} #{name} #{fktable.name}(%s)=>#{pktable.name}(%s)>" %
+        [fkcolumn_names.join(','), pkcolumn_names.join(',')]
+    end
+
     def name
       fk_name.send(options[:name_case] || :to_s)
     end

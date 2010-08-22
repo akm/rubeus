@@ -145,6 +145,8 @@ module Rubeus::Jdbc
       end
       @imported_keys
     end
+    alias_method :foreign_keys, :imported_keys
+    alias_method :fks, :imported_keys
 
     EXPORTED_KEY_UNIQUE_ATTRS = %w(FKTABLE_CAT FKTABLE_SCHEM FKTABLE_NAME PK_NAME)
 

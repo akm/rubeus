@@ -42,27 +42,34 @@ module Rubeus::Jdbc
       columns.detect{|col|col.column_name.upcase == column_name}
     end
 
-    def primary_keys
-      unless @primary_keys
-        pkeys = meta_data.getPrimaryKeys(table_cat, table_schem, table_name).map{|r| r.to_hash}
-        @primary_keys = Rubeus::Util::NameAccessArray.new(
-          *pkeys.
+    def primary_key
+      unless defined?(@primary_keys)
+        pk_records = meta_data.getPrimaryKeys(table_cat, table_schem, table_name).
+          map{|r| r.to_hash}.
           select{|hash|self.same_fqn?(hash)}.
-          sort{|a,b| a['KEY_SEQ'] <=> b['KEY_SEQ']}.
-          map{|hash| Rubeus::Jdbc::PrimaryKey.new(meta_data, self, hash, options)})
+          sort_by{|record| record['KEY_SEQ']}
+        if pk_records.empty?
+          @primary_key = nil
+        else
+          @primary_key = Rubeus::Jdbc::PrimaryKey.new(meta_data, self, {
+              :pk_name => pk_records.map{|record| record['PK_NAME']}.uniq.first,
+              :column_names => pk_records.map{|record| record['COLUMN_NAME'].
+                send(options[:name_case] || :to_s)}
+            },
+            options)
+        end
       end
-      @primary_keys
+      @primary_key
     end
-    alias_method :pks, :primary_keys
+    alias_method :pk, :primary_key
 
     def primary_key_names
-      primary_keys.map{|pk| pk.name}
+      primary_key ? primary_key.column_names : []
     end
     alias_method :pk_names, :primary_key_names
 
     def primary_key_columns
-      @primary_key_columns ||=
-        Rubeus::Util::NameAccessArray.new(*primary_keys.map{|pk| self.columns[pk.name]})
+      primary_key ? primary_key.columns : []
     end
     alias_method :pk_columns, :primary_key_columns
 
@@ -74,10 +81,8 @@ module Rubeus::Jdbc
       end
     end
 
-    singular_access_if_possible(:pk, :pks)
     singular_access_if_possible(:pk_name, :pk_names)
     singular_access_if_possible(:pk_column, :pk_columns)
-    singular_access_if_possible(:primary_key, :primary_keys)
     singular_access_if_possible(:primary_key_name, :primary_key_names)
     singular_access_if_possible(:primary_key_column, :primary_key_columns)
 

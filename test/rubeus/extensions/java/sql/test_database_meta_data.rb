@@ -120,6 +120,13 @@ class TestDatabaseMetaData < ActiveSupport::TestCase
     assert_column(flights, 'dest_airport', :char, 3, true)
     assert_column(flights, 'arrive_time', :time, 8, true)
     assert_column(flights, 'meal', :char, 1, true)
+    assert_equal "#<Rubeus::Jdbc::Column flight_id CHAR(6) NOT NULL>", flights.columns["flight_id"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column segment_number INTEGER(10) NOT NULL>", flights.columns["segment_number"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column orig_airport CHAR(3) NULL>", flights.columns["orig_airport"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column depart_time TIME(8) NULL>", flights.columns["depart_time"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column dest_airport CHAR(3) NULL>", flights.columns["dest_airport"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column arrive_time TIME(8) NULL>", flights.columns["arrive_time"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column meal CHAR(1) NULL>", flights.columns["meal"].inspect
     #
     assert_not_nil fltavail = tables['fltavail']
     assert_equal 6, fltavail.columns.length
@@ -129,22 +136,35 @@ class TestDatabaseMetaData < ActiveSupport::TestCase
     assert_column(fltavail, 'economy_seats_taken', :integer, 10, true)
     assert_column(fltavail, 'business_seats_taken', :integer, 10, true)
     assert_column(fltavail, 'firstclass_seats_taken', :integer, 10, true)
+    assert_equal "#<Rubeus::Jdbc::Column flight_id CHAR(6) NOT NULL>", fltavail.columns["flight_id"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column segment_number INTEGER(10) NOT NULL>", fltavail.columns["segment_number"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column flight_date DATE(10) NOT NULL>", fltavail.columns["flight_date"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column economy_seats_taken INTEGER(10) NULL>", fltavail.columns["economy_seats_taken"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column business_seats_taken INTEGER(10) NULL>", fltavail.columns["business_seats_taken"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column firstclass_seats_taken INTEGER(10) NULL>", fltavail.columns["firstclass_seats_taken"].inspect
     #
     assert_not_nil ctiies = tables['cities']
     assert_equal 2, ctiies.columns.length
     assert_column(ctiies, 'id', :integer, 10, false)
     assert_column(ctiies, 'city_name', :varchar, 50, true)
+    assert_equal "#<Rubeus::Jdbc::Column id INTEGER(10) NOT NULL>", ctiies.columns["id"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column city_name VARCHAR(50) NULL>", ctiies.columns["city_name"].inspect
     #
     assert_not_nil metropolitan = tables['metropolitan']
     assert_equal 3, metropolitan.columns.length
     assert_column(metropolitan, 'hotel_id', :integer, 10, false)
     assert_column(metropolitan, 'hotel_name', :varchar, 40, false)
     assert_column(metropolitan, 'city_id', :integer, 10, true)
+    assert_equal "#<Rubeus::Jdbc::Column hotel_id INTEGER(10) NOT NULL>", metropolitan.columns["hotel_id"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column hotel_name VARCHAR(40) NOT NULL>", metropolitan.columns["hotel_name"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column city_id INTEGER(10) NULL>", metropolitan.columns["city_id"].inspect
     #
     assert_not_nil test1 = tables['test1']
     assert_equal 2, test1.columns.length
     assert_column(test1, 'id', :integer, 10, false)
     assert_column(test1, 'name', :varchar, 60, true)
+    assert_equal "#<Rubeus::Jdbc::Column id INTEGER(10) NOT NULL>", test1.columns["id"].inspect
+    assert_equal "#<Rubeus::Jdbc::Column name VARCHAR(60) NULL>", test1.columns["name"].inspect
   rescue => e
     puts e.to_s
     puts e.backtrace.join("\n  ")
@@ -152,16 +172,16 @@ class TestDatabaseMetaData < ActiveSupport::TestCase
   end
 
   def assert_pk(table, names)
-    assert_equal names.length, table.primary_keys.length
-    assert_equal names, table.pks.map{|k| k.name}
-    assert_equal names, table.primary_keys.map{|k| k.name}
     assert_equal names, table.pk_names
     assert_equal names, table.primary_key_names
     names.each_with_index do |name, index|
-      assert_equal name, table.primary_keys[name].name
-      assert_equal index + 1, table.primary_keys[name].seq
+      assert_equal table.columns[name], table.primary_key.columns[index]
+      assert_equal table.columns[name], table.primary_key.columns[name]
+      assert_equal table.columns[name], table.primary_key_columns[index]
       assert_equal table.columns[name], table.primary_key_columns[name]
+      assert_equal table.columns[name], table.pk_columns[index]
       assert_equal table.columns[name], table.pk_columns[name]
+      assert_equal name, table.primary_key[index]
     end
     case names.length
     when 0
@@ -172,19 +192,21 @@ class TestDatabaseMetaData < ActiveSupport::TestCase
       assert_equal nil, table.pk_column
       assert_equal nil, table.primary_key_column
     when 1
-      assert_equal table.pks.first, table.pk
-      assert_equal table.pks.first, table.primary_key
       assert_equal table.pk_names.first, table.pk_name
       assert_equal table.pk_names.first, table.primary_key_name
       assert_equal table.pk_columns.first, table.pk_column
       assert_equal table.pk_columns.first, table.primary_key_column
     else
-      assert_equal table.pks, table.pk
-      assert_equal table.pks, table.primary_key
       assert_equal table.pk_names, table.pk_name
       assert_equal table.pk_names, table.primary_key_name
       assert_equal table.pk_columns, table.pk_column
       assert_equal table.pk_columns, table.primary_key_column
+    end
+    if names.length > 0
+      assert_equal names.length, table.primary_key.length
+      assert_equal names, table.primary_key.column_names
+      assert_equal names, table.pk.column_names
+      assert_equal "#<Rubeus::Jdbc::PrimaryKey #{table.name}(#{names.join(',')})>", table.primary_key.inspect
     end
     table.columns.each do |column|
       if table.pk_names.include?(column.name)
@@ -215,15 +237,23 @@ class TestDatabaseMetaData < ActiveSupport::TestCase
     tables = @con.meta_data.tables(:schema => "APP", :name_case => :downcase)
     # assert_equal %w(idx_flight_01 idx_flight_02 idx_flight_03), tables['flights'].indexes.map{|idx| idx.name}
     # assert_equal 3, tables['flights'].indexes.length
-    assert_index(tables['flights'], 'idx_flight_01', %w(orig_airport), [true])
-    assert_index(tables['flights'], 'idx_flight_02', %w(orig_airport depart_time), [true, false])
-    assert_index(tables['flights'], 'idx_flight_03', %w(dest_airport arrive_time), [true, false])
+    t = tables['flights']
+    assert_index(t, 'idx_flight_01', %w(orig_airport), [true])
+    assert_index(t, 'idx_flight_02', %w(orig_airport depart_time), [true, false])
+    assert_index(t, 'idx_flight_03', %w(dest_airport arrive_time), [true, false])
+    assert_equal "#<Rubeus::Jdbc::Index flights.idx_flight_01(orig_airport)>", t.indexes['idx_flight_01'].inspect
+    assert_equal "#<Rubeus::Jdbc::Index flights.idx_flight_02(orig_airport,depart_time DESC)>", t.indexes['idx_flight_02'].inspect
+    assert_equal "#<Rubeus::Jdbc::Index flights.idx_flight_03(dest_airport,arrive_time DESC)>", t.indexes['idx_flight_03'].inspect
+
     # assert_equal 0, tables['fltavail'].indexes.length
 
     # assert_equal 1, tables['cities'].indexes.length
     assert_index(tables['cities'], 'idx_cities_01', %w(city_name), [true])
+    assert_equal "#<Rubeus::Jdbc::Index cities.idx_cities_01(city_name)>", tables['cities'].indexes['idx_cities_01'].inspect
+
     # assert_equal 1, tables['metropolitan'].indexes.length
     assert_index(tables['metropolitan'], 'idx_metropolitan_01', %w(city_id hotel_name), [true, true])
+    assert_equal "#<Rubeus::Jdbc::Index metropolitan.idx_metropolitan_01(city_id,hotel_name)>", tables['metropolitan'].indexes['idx_metropolitan_01'].inspect
 
     # assert_equal 0, tables['test1'].indexes.length
   end

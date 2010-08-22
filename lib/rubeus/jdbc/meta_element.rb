@@ -5,7 +5,7 @@ module Rubeus::Jdbc
       @meta_data = meta_data
       @jdbc_info = attrs.dup
       attrs.each do |attr, value|
-        m = "#{attr.downcase}="
+        m = "#{attr.to_s.downcase}="
         self.send(m, value) if respond_to?(m)
       end
       @options = options ? options.dup : {}

@@ -14,12 +14,31 @@ module Rubeus::Jdbc
     # see also:
     # http://java.sun.com/j2se/1.5.0/ja/docs/ja/api/java/sql/DatabaseMetaData.html#getPrimaryKeys(java.lang.String,%20java.lang.String,%20java.lang.String)
 
-    attr_accessor :column_name, :key_seq, :pk_name
+    attr_accessor :column_names, :pk_name
 
-    alias_method :seq, :key_seq
+    # attr_accessor :key_seq # key_seq はこのインスタンス生成時のcolumn_namesの要素の順番として保持されます。
+    # alias_method :seq, :key_seq
+
+    def inspect
+      "#<#{self.class.name} #{table.name}(%s)>" % column_names.join(',')
+    end
+
+    def [](index)
+      column_names[index]
+    end
+
+    def length
+      column_names.length
+    end
 
     def name
-      column_name.send(options[:name_case] || :to_s)
+      column_names.send(options[:name_case] || :to_s).join(",")
     end
+
+    def columns
+      @columns ||= Rubeus::Util::NameAccessArray.new(*
+        column_names.map{|col_name| table.columns[col_name]})
+    end
+
   end
 end

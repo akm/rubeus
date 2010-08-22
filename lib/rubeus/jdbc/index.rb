@@ -31,6 +31,11 @@ module Rubeus::Jdbc
       :pages, :filter_condition]
     attr_accessor(*(ATTR_NAMES - [:table_cat, :table_schem, :table_name]))
 
+    def inspect
+      "#<#{self.class.name} #{table.name}.#{name}(%s)>" % 
+        keys.map{|k| k.name + (k.desc? ? " DESC" : '')}.join(',')
+    end
+
     def name
       index_name.send(options[:name_case] || :to_s)
     end

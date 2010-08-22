@@ -42,6 +42,11 @@ module Rubeus::Jdbc
 
     alias_method :size, :column_size
 
+    def inspect
+      "#<#{self.class.name} #{self.name} #{type_name}(#{size}) #{nullable? ? 'NULL' : 'NOT NULL'}>"
+    end
+
+
     def name
       column_name.send(options[:name_case] || :to_s)
     end

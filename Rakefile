@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 require 'rubygems'
-require 'rmaven'
-require 'tasks/mvn'
+begin
+  require 'rmaven'
+  require 'tasks/mvn'
+rescue LoadError
+  puts "rmaven (or a dependency) not available. Install it with: gem install rmaven"
+end
 require 'rake'
 
 begin

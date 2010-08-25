@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["akimatter"]
-  s.date = %q{2010-08-14}
+  s.date = %q{2010-08-26}
   s.description = %q{Rubeus provides you an easy access to Java objects from Ruby scripts on JRuby}
   s.email = %q{rubeus@googlegroups.com}
   s.executables = ["jirb_rubeus", "jirb_rubeus.bat"]
@@ -132,7 +132,6 @@ Gem::Specification.new do |s|
      "test/rubeus/reflection/test_method_modifier.rb",
      "test/rubeus/test_extensions.rb",
      "test/rubeus_test.jar",
-     "test/test_all.rb",
      "test_jar/.classpath",
      "test_jar/.gitignore",
      "test_jar/.project",
@@ -148,7 +147,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{Rubeus provides you an easy access to Java objects from Ruby scripts on JRuby}
   s.test_files = [
-     "test/rubeus/test_extensions.rb",
+    "test/rubeus/test_extensions.rb",
      "test/rubeus/awt/test_attributes.rb",
      "test/rubeus/awt/test_event.rb",
      "test/rubeus/awt/test_nestable.rb",
@@ -179,6 +178,7 @@ Gem::Specification.new do |s|
      "examples/rubeus_swing_example01_with_class.rb",
      "examples/rubeus_swing_example02.rb",
      "examples/rubeus_swing_example03.rb",
+     "examples/rubeus_swing_jdbc_example01.rb",
      "examples/nyanco_viewer/nyanco_disp_label.rb",
      "examples/nyanco_viewer/nyanco_viewer_rubeus.rb"
   ]

@@ -124,8 +124,7 @@ Gem::Specification.new do |s|
      "test/rubeus/extensions/javax/swing/test_j_table.rb",
      "test/rubeus/extensions/javax/swing/test_j_text_field.rb",
      "test/rubeus/extensions/javax/swing/test_timer.rb",
-     "test/rubeus/test_extensions.rb",
-     "test/test_all.rb"
+     "test/rubeus/test_extensions.rb"
   ]
   s.homepage = %q{http://code.google.com/p/rubeus/}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -133,7 +132,6 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{Rubeus provides you an easy access to Java objects from Ruby scripts on JRuby}
   s.test_files = [
-    "test/test_all.rb",
      "test/rubeus/test_extensions.rb",
      "test/rubeus/awt/test_attributes.rb",
      "test/rubeus/awt/test_event.rb",

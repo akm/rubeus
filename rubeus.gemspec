@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["akimatter"]
-  s.date = %q{2010-08-26}
+  s.date = %q{2010-08-28}
   s.description = %q{Rubeus provides you an easy access to Java objects from Ruby scripts on JRuby}
   s.email = %q{rubeus@googlegroups.com}
   s.executables = ["jirb_rubeus", "jirb_rubeus.bat"]
@@ -98,6 +98,7 @@ Gem::Specification.new do |s|
      "lib/rubeus/jdbc/result_set_column.rb",
      "lib/rubeus/jdbc/table.rb",
      "lib/rubeus/reflection.rb",
+     "lib/rubeus/reflection/java_methods.rb",
      "lib/rubeus/swing.rb",
      "lib/rubeus/util.rb",
      "lib/rubeus/util/java_method_name.rb",
@@ -129,9 +130,11 @@ Gem::Specification.new do |s|
      "test/rubeus/extensions/javax/swing/test_j_table.rb",
      "test/rubeus/extensions/javax/swing/test_j_text_field.rb",
      "test/rubeus/extensions/javax/swing/test_timer.rb",
+     "test/rubeus/reflection/test_java_methods.rb",
      "test/rubeus/reflection/test_method_modifier.rb",
      "test/rubeus/test_extensions.rb",
      "test/rubeus_test.jar",
+     "test/test_helper.rb",
      "test_jar/.classpath",
      "test_jar/.gitignore",
      "test_jar/.project",
@@ -147,7 +150,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{Rubeus provides you an easy access to Java objects from Ruby scripts on JRuby}
   s.test_files = [
-    "test/rubeus/test_extensions.rb",
+    "test/test_helper.rb",
+     "test/rubeus/test_extensions.rb",
      "test/rubeus/awt/test_attributes.rb",
      "test/rubeus/awt/test_event.rb",
      "test/rubeus/awt/test_nestable.rb",
@@ -171,6 +175,7 @@ Gem::Specification.new do |s|
      "test/rubeus/extensions/javax/swing/test_j_text_field.rb",
      "test/rubeus/extensions/javax/swing/test_timer.rb",
      "test/rubeus/extensions/javax/swing/table/test_default_table_model.rb",
+     "test/rubeus/reflection/test_java_methods.rb",
      "test/rubeus/reflection/test_method_modifier.rb",
      "examples/jdbc_example.rb",
      "examples/notepad.rb",
@@ -188,18 +193,15 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<activesupport>, [">= 2.1.2"])
+      s.add_runtime_dependency(%q<activesupport>, ["= 2.1.2"])
       s.add_development_dependency(%q<rcov>, [">= 0.9.8"])
-      s.add_development_dependency(%q<jdbc-derby>, [">= 0"])
     else
-      s.add_dependency(%q<activesupport>, [">= 2.1.2"])
+      s.add_dependency(%q<activesupport>, ["= 2.1.2"])
       s.add_dependency(%q<rcov>, [">= 0.9.8"])
-      s.add_dependency(%q<jdbc-derby>, [">= 0"])
     end
   else
-    s.add_dependency(%q<activesupport>, [">= 2.1.2"])
+    s.add_dependency(%q<activesupport>, ["= 2.1.2"])
     s.add_dependency(%q<rcov>, [">= 0.9.8"])
-    s.add_dependency(%q<jdbc-derby>, [">= 0"])
   end
 end
 

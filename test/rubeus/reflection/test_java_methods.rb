@@ -10,10 +10,9 @@ class TestJavaMethods < Test::Unit::TestCase
   end
 
   def test_java_string_java_class_methods
-    expected_methods = %w[copyValueOf format valueOf]
-    assert_equal expected_methods, java.lang.String.java_methods.sort
-    assert_equal expected_methods, java.lang.String.java_class_methods.sort
-    assert_equal expected_methods, java.lang.String.java_singleton_methods.sort
+    assert_equal %w[checkBounds copyValueOf format indexOf lastIndexOf valueOf], java.lang.String.java_methods.sort
+    assert_equal %w[checkBounds copyValueOf format indexOf lastIndexOf valueOf], java.lang.String.java_singleton_methods.sort
+    assert_equal %w[copyValueOf format valueOf], java.lang.String.java_class_methods.sort
   end
 
   def test_java_string_java_instance_methods
@@ -32,6 +31,12 @@ class TestJavaMethods < Test::Unit::TestCase
   VariousMethods = jp.rubybizcommons.rubeus.test.reflection.VariousMethods
 
   def test_public_class_methods
+    assert_equal true, VariousMethods.respond_to?(:java_public_methods)
+    assert_equal true, VariousMethods.respond_to?(:java_public_class_methods)
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_public_methods)
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_public_class_methods)
+    assert_equal %w[main staticPublicStrictfp], VariousMethods.java_public_methods
+    assert_equal %w[main staticPublicStrictfp], VariousMethods.java_public_class_methods
     assert_equal %w[main staticPublicStrictfp], VariousMethods.java_class.java_public_methods.map(&:name)
     assert_equal %w[main staticPublicStrictfp], VariousMethods.java_class.java_public_class_methods.map(&:name)
     VariousMethods.java_class.java_public_methods.each{|java_method| assert java_method.public?}
@@ -39,6 +44,11 @@ class TestJavaMethods < Test::Unit::TestCase
   end
 
   def test_public_instance_methods
+    assert_equal true, VariousMethods.respond_to?(:java_public_instance_methods)
+    assert_equal true, VariousMethods.new.respond_to?(:java_public_methods)
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_public_instance_methods)
+    assert_equal(%w[publicStrictfp], VariousMethods.java_public_instance_methods)
+    assert_equal(%w[publicStrictfp], VariousMethods.new.java_public_methods)
     assert_equal(%w[publicStrictfp],
       (VariousMethods.java_class.java_public_instance_methods.map(&:name) -
         java.lang.Object.java_class.java_public_instance_methods.map(&:name)))
@@ -46,6 +56,8 @@ class TestJavaMethods < Test::Unit::TestCase
   end
 
   def test_protected_class_methods
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_protected_methods)
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_protected_class_methods)
     assert_equal 1, VariousMethods.java_class.java_protected_methods.length
     VariousMethods.java_class.java_protected_methods.each{|java_method| assert java_method.protected?}
     VariousMethods.java_class.java_protected_class_methods.each{|java_method| assert java_method.protected?}
@@ -54,6 +66,7 @@ class TestJavaMethods < Test::Unit::TestCase
   end
 
   def test_protected_instance_methods
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_protected_class_methods)
     assert_equal(%w[protectedFinal],
       (VariousMethods.java_class.java_protected_instance_methods.map(&:name) -
         java.lang.Object.java_class.java_protected_instance_methods.map(&:name)))
@@ -61,7 +74,10 @@ class TestJavaMethods < Test::Unit::TestCase
   end
 
   def test_package_scope_class_methods
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_package_scope_methods)
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_package_scope_class_methods)
     assert_equal 1, VariousMethods.java_class.java_package_scope_methods.length
+    assert_equal 1, VariousMethods.java_class.java_package_scope_class_methods.length
     VariousMethods.java_class.java_package_scope_methods.each{|java_method| assert java_method.package_scope?}
     VariousMethods.java_class.java_package_scope_class_methods.each{|java_method| assert java_method.package_scope?}
     assert_equal %w[staticPackageSynchronized], VariousMethods.java_class.java_package_scope_methods.map(&:name)
@@ -69,6 +85,8 @@ class TestJavaMethods < Test::Unit::TestCase
   end
 
   def test_package_scope_instance_methods
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_package_scope_instance_methods)
+    assert_equal 1, VariousMethods.java_class.java_package_scope_instance_methods.length
     assert_equal(%w[packageSynchronized],
       (VariousMethods.java_class.java_package_scope_instance_methods.map(&:name) -
         java.lang.Object.java_class.java_package_scope_instance_methods.map(&:name)))
@@ -77,6 +95,8 @@ class TestJavaMethods < Test::Unit::TestCase
 
 
   def test_private_class_methods
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_private_methods)
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_private_class_methods)
     assert_equal 1, VariousMethods.java_class.java_private_methods.length
     VariousMethods.java_class.java_private_methods.each{|java_method| assert java_method.private?}
     VariousMethods.java_class.java_private_class_methods.each{|java_method| assert java_method.private?}
@@ -85,6 +105,8 @@ class TestJavaMethods < Test::Unit::TestCase
   end
 
   def test_private_instance_methods
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_private_instance_methods)
+    assert_equal 1, VariousMethods.java_class.java_private_instance_methods.length
     assert_equal(%w[privateFinal],
       (VariousMethods.java_class.java_private_instance_methods.map(&:name) -
         java.lang.Object.java_class.java_private_instance_methods.map(&:name)))
@@ -93,6 +115,8 @@ class TestJavaMethods < Test::Unit::TestCase
 
 
   def test_final_class_methods
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_final_methods)
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_final_class_methods)
     assert_equal 1, VariousMethods.java_class.java_final_methods.length
     VariousMethods.java_class.java_final_methods.each{|java_method| assert java_method.final?}
     VariousMethods.java_class.java_final_class_methods.each{|java_method| assert java_method.final?}
@@ -101,10 +125,12 @@ class TestJavaMethods < Test::Unit::TestCase
   end
 
   def test_final_instance_methods
+    assert_equal true, VariousMethods.java_class.respond_to?(:java_final_instance_methods)
     assert_equal(%w[protectedFinal privateFinal],
       (VariousMethods.java_class.java_final_instance_methods.map(&:name) -
         java.lang.Object.java_class.java_final_instance_methods.map(&:name)))
     VariousMethods.java_class.java_final_instance_methods.each{|java_method| assert java_method.final?}
   end
-  
+
+
 end

@@ -40,6 +40,7 @@ Gem::Specification.new do |s|
      "examples/rubeus_swing_example01_with_class.rb",
      "examples/rubeus_swing_example02.rb",
      "examples/rubeus_swing_example03.rb",
+     "examples/rubeus_swing_jdbc_example01.rb",
      "java/.gitignore",
      "java/mvn_plugins.yml",
      "java/pom.xml",
@@ -147,7 +148,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://code.google.com/p/rubeus/}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{Rubeus provides you an easy access to Java objects from Ruby scripts on JRuby}
   s.test_files = [
     "test/test_helper.rb",
@@ -192,7 +193,7 @@ Gem::Specification.new do |s|
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<activesupport>, ["= 2.1.2"])
       s.add_development_dependency(%q<rcov>, [">= 0.9.8"])
     else

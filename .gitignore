@@ -1,9 +1,11 @@
 *.class
+*~
+*.log
 /
+/.rvmrc
 /coverage
 /debugging
 /pkg
 /test_db
 /testdb
 rubeus-*.*.*-java.gem
-*~

@@ -20,7 +20,7 @@ begin
     gem.authors = ["akimatter"]
     gem.add_dependency "activesupport", "= 2.1.2"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-    gem.add_development_dependency "rcov", ">= 0.9.8"
+    # gem.add_development_dependency "rcov", ">= 0.9.8"
     gem.bindir = 'bin'
     gem.executables = %w[jirb_rubeus jirb_rubeus.bat]
   end
@@ -50,11 +50,9 @@ rescue LoadError
   end
 end
 
-task :test => :check_dependencies
-
 task :default => :test
 
-require 'rake/rdoctask'
+require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 

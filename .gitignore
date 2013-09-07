@@ -1,7 +1,8 @@
 *.class
-*~
 *.log
+*~
 /
+/.ruby-version
 /.rvmrc
 /coverage
 /debugging

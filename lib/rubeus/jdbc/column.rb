@@ -51,6 +51,16 @@ module Rubeus::Jdbc
       column_name.send(options[:name_case] || :to_s)
     end
 
+    # TYPE_ID_TO_NAMES = Hash[java.sql.Types.constants.each_with_object({}){|name, d| d[ java.sql.Types.const_get(name) ] = name}.sort]
+    TYPE_ID_TO_NAMES = {
+      -16=>:LONGNVARCHAR, -15=>:NCHAR, -9=>:NVARCHAR, -8=>:ROWID,
+      -7=>:BIT, -6=>:TINYINT, -5=>:BIGINT, -4=>:LONGVARBINARY, -3=>:VARBINARY, -2=>:BINARY, -1=>:LONGVARCHAR,
+      0=>:NULL, 1=>:CHAR, 2=>:NUMERIC, 3=>:DECIMAL, 4=>:INTEGER, 5=>:SMALLINT, 6=>:FLOAT, 7=>:REAL, 8=>:DOUBLE, 12=>:VARCHAR, 16=>:BOOLEAN,
+      70=>:DATALINK, 91=>:DATE, 92=>:TIME, 93=>:TIMESTAMP,
+      1111=>:OTHER, 2000=>:JAVA_OBJECT, 2001=>:DISTINCT, 2002=>:STRUCT, 2003=>:ARRAY,
+      2004=>:BLOB, 2005=>:CLOB, 2006=>:REF, 2009=>:SQLXML, 2011=>:NCLOB
+    }.freeze
+
     def jdbc_type
       @column_type ||= (TYPE_ID_TO_NAMES[data_type] || type_name || '')
     end

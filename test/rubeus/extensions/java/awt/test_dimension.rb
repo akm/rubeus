@@ -48,7 +48,7 @@ class TestDimension < MiniTest::Unit::TestCase
   end
 
   # create with multiply expression
-  def test_create_with_multiply expression
+  def test_create_with_multiply
     d = Dimension.create("400 x 500")
 
     assert_equal(400, d.width)

@@ -2,7 +2,7 @@ require 'minitest_helper'
 # Rubeus.verbose = true
 
 # Test for extensions.rb
-class TestExtensions < MiniTest::Unit::TestCase
+class TestExtensions < MiniTest::Test
   # setup method
   def setup
   end

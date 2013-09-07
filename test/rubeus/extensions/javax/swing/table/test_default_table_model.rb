@@ -6,7 +6,7 @@ require 'rexml/document'
 # Rubeus.verbose = true
 
 # Test for Rubeus::Extensions::Javax::Swing::Table
-class TestDefaultTableModel < MiniTest::Unit::TestCase
+class TestDefaultTableModel < MiniTest::Test
   include Rubeus::Swing
 
   # setup method

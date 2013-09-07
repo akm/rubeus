@@ -3,7 +3,7 @@ require 'minitest_helper'
 require 'test/rubeus/extensions/java/sql/test_sql_helper'
 
 # Test for connetion.rb
-class TestConnection < MiniTest::Unit::TestCase
+class TestConnection < MiniTest::Test
   include TestSqlHelper
   
   def setup

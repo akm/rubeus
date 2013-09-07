@@ -2,7 +2,7 @@ require 'minitest_helper'
 
 require File.expand_path('../../rubeus_test.jar', File.dirname(__FILE__))
 
-class TestMethodModifier < MiniTest::Unit::TestCase
+class TestMethodModifier < MiniTest::Test
   include Rubeus::Reflection
 
   VariousMethods = jp.rubybizcommons.rubeus.test.reflection.VariousMethods

@@ -1,7 +1,7 @@
 require 'minitest_helper'
 
 # Test for Rubeus::Extensions::Javax::Swing
-class TestJComponent < MiniTest::Unit::TestCase
+class TestJComponent < MiniTest::Test
   include Rubeus::Swing
 
   # setup method

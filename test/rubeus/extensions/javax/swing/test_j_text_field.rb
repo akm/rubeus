@@ -1,7 +1,7 @@
 require 'minitest_helper'
 
 # Test for j_scroll_pane.rb
-class TestJTextField < MiniTest::Unit::TestCase
+class TestJTextField < MiniTest::Test
   include Rubeus::Swing
 
   # setup method

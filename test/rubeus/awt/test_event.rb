@@ -1,7 +1,7 @@
 require 'minitest_helper'
 
 # Test for event.rb
-class TestEvent < MiniTest::Unit::TestCase
+class TestEvent < MiniTest::Test
   include Rubeus::Swing
 
   class TestClass

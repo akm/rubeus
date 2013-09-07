@@ -1,7 +1,7 @@
 require 'minitest_helper'
 
 # Test for timer.rb
-class TestTimer < MiniTest::Unit::TestCase
+class TestTimer < MiniTest::Test
   include Rubeus::Swing
 
   # setup method

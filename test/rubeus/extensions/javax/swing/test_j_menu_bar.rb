@@ -1,16 +1,16 @@
 require 'minitest_helper'
 
 # Test for j_menu_bar.rb
-class TestJMenuBar < MiniTest::Unit::TestCase
+class TestJMenuBar < MiniTest::Test
   include Rubeus::Swing
 
   # setup method
   def setup
   end
-  
+
   # normal pattern
   def test_normal
-    assert_nothing_raised do   
+    assert_nothing_raised do
       JFrame.new do |f|
         menubar = JMenuBar.new do
           JMenu.new("File") do

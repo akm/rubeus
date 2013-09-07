@@ -3,9 +3,9 @@ require 'minitest_helper'
 require 'test/rubeus/extensions/java/sql/test_sql_helper'
 
 # Test for result_set.rb
-class TestResultSet < MiniTest::Unit::TestCase
+class TestResultSet < MiniTest::Test
   include TestSqlHelper
-  
+
   def setup
     setup_connection
     @con.statement do |stmt|

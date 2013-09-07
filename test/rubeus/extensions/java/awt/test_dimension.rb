@@ -1,7 +1,7 @@
 require 'minitest_helper'
 
 # Test for Rubeus::Extensions::Java::Awt
-class TestDimension < MiniTest::Unit::TestCase
+class TestDimension < MiniTest::Test
   include Rubeus::Awt
 
   # setup method

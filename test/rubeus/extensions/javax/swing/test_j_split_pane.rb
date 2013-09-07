@@ -2,7 +2,7 @@
 require 'minitest_helper'
 
 # Test for j_split_pane.rb
-class TestJSplitPane < MiniTest::Unit::TestCase
+class TestJSplitPane < MiniTest::Test
   include Rubeus::Swing
 
   # setup method

@@ -2,7 +2,7 @@
 require 'minitest_helper'
 
 # Test for j_table.rb
-class TestJTable < MiniTest::Unit::TestCase
+class TestJTable < MiniTest::Test
   include Rubeus::Swing
 
   # setup method

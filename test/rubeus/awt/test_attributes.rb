@@ -1,7 +1,7 @@
 require 'minitest_helper'
 
 # Test for attributes.rb
-class TestAttributes < MiniTest::Unit::TestCase
+class TestAttributes < MiniTest::Test
   include Rubeus::Swing
 
   # setup method

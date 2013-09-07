@@ -1,7 +1,7 @@
 require 'minitest_helper'
 
 # Test for Rubeus::Extensions::Javax::Swing
-class TestBoxLayout < MiniTest::Unit::TestCase
+class TestBoxLayout < MiniTest::Test
   include Rubeus::Swing
 
   # setup method

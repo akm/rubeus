@@ -1,7 +1,7 @@
 require 'minitest_helper'
 
 # Test for driver_manager.rb
-class TestDriverManager < MiniTest::Unit::TestCase
+class TestDriverManager < MiniTest::Test
   # setup method
   def setup
   end

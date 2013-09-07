@@ -3,7 +3,7 @@ require 'minitest_helper'
 require 'test/rubeus/extensions/java/sql/test_sql_helper'
 
 # Test for lib/rubeus/extensions/java/sql/database_meta_data.rb
-class TestDatabaseMetaData < MiniTest::Unit::TestCase # ActiveSupport::TestCase
+class TestDatabaseMetaData < MiniTest::Test # ActiveSupport::TestCase
   include TestSqlHelper
 
   def setup

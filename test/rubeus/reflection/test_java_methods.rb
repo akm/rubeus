@@ -3,7 +3,7 @@
 require File.expand_path('../../minitest_helper', File.dirname(__FILE__))
 require File.expand_path('../../rubeus_test.jar', File.dirname(__FILE__))
 
-class TestJavaMethods < MiniTest::Unit::TestCase
+class TestJavaMethods < MiniTest::Test
   include Rubeus::Reflection
 
   def test_ruby_string_java_methods

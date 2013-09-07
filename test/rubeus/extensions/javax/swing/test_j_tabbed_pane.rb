@@ -1,7 +1,7 @@
 require 'minitest_helper'
 
 # Test for j_tabbed_pane.rb
-class TestJTabbedPane < MiniTest::Unit::TestCase
+class TestJTabbedPane < MiniTest::Test
   include Rubeus::Swing
 
   # setup method

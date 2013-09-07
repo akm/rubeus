@@ -1,7 +1,7 @@
 require 'minitest_helper'
 
 # Test for j_frame.rb
-class TestJFrame < MiniTest::Unit::TestCase
+class TestJFrame < MiniTest::Test
   include Rubeus::Swing
 
   # setup method
@@ -17,7 +17,7 @@ class TestJFrame < MiniTest::Unit::TestCase
 
       assert_equal(400, f.width)
       assert_equal(300, f.height)
-      assert_equal(JFrame.const_get(:EXIT_ON_CLOSE), f.default_close_operation)  
+      assert_equal(JFrame.const_get(:EXIT_ON_CLOSE), f.default_close_operation)
     end
   end
 
@@ -33,7 +33,7 @@ class TestJFrame < MiniTest::Unit::TestCase
 
         assert_equal(300, f.width)
         assert_equal(400, f.height)
-        assert_equal(JFrame.const_get(:EXIT_ON_CLOSE), f.default_close_operation)  
+        assert_equal(JFrame.const_get(:EXIT_ON_CLOSE), f.default_close_operation)
       end
     end
   end

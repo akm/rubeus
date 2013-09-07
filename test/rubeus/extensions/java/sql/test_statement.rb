@@ -41,4 +41,3 @@ class TestStatement < MiniTest::Test
     teardown_connection
   end
 end
-

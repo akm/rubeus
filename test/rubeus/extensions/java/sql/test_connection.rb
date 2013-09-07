@@ -5,7 +5,7 @@ require 'test/rubeus/extensions/java/sql/test_sql_helper'
 # Test for connetion.rb
 class TestConnection < MiniTest::Test
   include TestSqlHelper
-  
+
   def setup
     setup_connection
   end
@@ -38,4 +38,3 @@ class TestConnection < MiniTest::Test
     teardown_connection
   end
 end
-

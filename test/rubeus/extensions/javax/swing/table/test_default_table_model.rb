@@ -149,7 +149,7 @@ class TestDefaultTableModel < MiniTest::Test
     # load_from_xml
     nhk_word_table.model.load_from_xml(@xml,
       :row_path => '*/nhk-word',
-      :column_paths => ['id'], 
+      :column_paths => ['id'],
       :refresh_columns => true)
 
     # assert row count
@@ -187,7 +187,7 @@ class TestDefaultTableModel < MiniTest::Test
     # load_from_xml
     nhk_word_table.model.load_from_xml(@xml,
       :row_path => '*/nhk-word',
-      :column_paths => ['id', 'expression', 'created-at'], 
+      :column_paths => ['id', 'expression', 'created-at'],
       :refresh_columns => true)
 
     # assert row count

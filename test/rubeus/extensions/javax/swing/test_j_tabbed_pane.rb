@@ -199,4 +199,3 @@ tp.set_icons([File.join(File.dirname(__FILE__), "..", "..", "..", "..", "..", "e
     end
   end
 end
-

@@ -1,9 +1,7 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
 
 # Test for Rubeus::Extensions::Java::Awt
-class TestDimension < Test::Unit::TestCase
+class TestDimension < MiniTest::Unit::TestCase
   include Rubeus::Awt
 
   # setup method
@@ -50,7 +48,7 @@ class TestDimension < Test::Unit::TestCase
   end
 
   # create with multiply expression
-  def test_create_with_multiply expression
+  def test_create_with_multiply
     d = Dimension.create("400 x 500")
 
     assert_equal(400, d.width)

@@ -1,12 +1,9 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
-# gem "activesupport"
-# require 'active_support/test_case'
+require 'minitest_helper'
+
 require 'test/rubeus/extensions/java/sql/test_sql_helper'
 
 # Test for lib/rubeus/extensions/java/sql/database_meta_data.rb
-class TestDatabaseMetaData < Test::Unit::TestCase # ActiveSupport::TestCase
+class TestDatabaseMetaData < MiniTest::Unit::TestCase # ActiveSupport::TestCase
   include TestSqlHelper
 
   def setup

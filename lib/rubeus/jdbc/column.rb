@@ -68,7 +68,7 @@ module Rubeus::Jdbc
 
     attr_accessor :rails_ignored
     attr_accessor :rails_name, :rails_options
-    attr_reader :name_changed?
+    # attr_reader :name_changed?
 
     def nullable?
       @_nullable ||= (is_nullable != 'NO')

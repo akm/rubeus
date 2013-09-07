@@ -1,9 +1,7 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
 
 # Test for j_menu_bar.rb
-class TestJMenuBar < Test::Unit::TestCase
+class TestJMenuBar < MiniTest::Unit::TestCase
   include Rubeus::Swing
 
   # setup method

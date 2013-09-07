@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
+
 require 'rexml/document'
 
 # Rubeus.verbose = true
 
 # Test for Rubeus::Extensions::Javax::Swing::Table
-class TestDefaultTableModel < Test::Unit::TestCase
+class TestDefaultTableModel < MiniTest::Unit::TestCase
   include Rubeus::Swing
 
   # setup method

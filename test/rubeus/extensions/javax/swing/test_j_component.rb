@@ -1,9 +1,7 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
 
 # Test for Rubeus::Extensions::Javax::Swing
-class TestJComponent < Test::Unit::TestCase
+class TestJComponent < MiniTest::Unit::TestCase
   include Rubeus::Swing
 
   # setup method

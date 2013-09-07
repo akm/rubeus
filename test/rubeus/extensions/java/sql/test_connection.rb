@@ -1,10 +1,9 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
+
 require 'test/rubeus/extensions/java/sql/test_sql_helper'
 
 # Test for connetion.rb
-class TestConnection < Test::Unit::TestCase
+class TestConnection < MiniTest::Unit::TestCase
   include TestSqlHelper
   
   def setup

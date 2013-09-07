@@ -1,9 +1,7 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
 
 # Test for j_frame.rb
-class TestJFrame < Test::Unit::TestCase
+class TestJFrame < MiniTest::Unit::TestCase
   include Rubeus::Swing
 
   # setup method

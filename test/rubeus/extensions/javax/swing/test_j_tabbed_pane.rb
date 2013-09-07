@@ -1,9 +1,7 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
 
 # Test for j_tabbed_pane.rb
-class TestJTabbedPane < Test::Unit::TestCase
+class TestJTabbedPane < MiniTest::Unit::TestCase
   include Rubeus::Swing
 
   # setup method

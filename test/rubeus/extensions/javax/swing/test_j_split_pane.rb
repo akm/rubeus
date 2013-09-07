@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
 
 # Test for j_split_pane.rb
-class TestJSplitPane < Test::Unit::TestCase
+class TestJSplitPane < MiniTest::Unit::TestCase
   include Rubeus::Swing
 
   # setup method

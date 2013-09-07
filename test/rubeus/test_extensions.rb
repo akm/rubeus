@@ -1,10 +1,8 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
 # Rubeus.verbose = true
 
 # Test for extensions.rb
-class TestExtensions < Test::Unit::TestCase
+class TestExtensions < MiniTest::Unit::TestCase
   # setup method
   def setup
   end
@@ -34,9 +32,7 @@ class TestExtensions < Test::Unit::TestCase
   # test find_for
   def test_find_for
     # normal
-    assert_nothing_raised do
-      Rubeus::Extensions.find_for("javax.swing.JTable")
-    end
+    Rubeus::Extensions.find_for("javax.swing.JTable")
 
     # LoadError
     assert_nil(Rubeus::Extensions.find_for("javax.swing.DoesNotExistClass"))

@@ -1,3 +1,5 @@
+require 'minitest_helper'
+
 module TestSqlHelper
   def setup_connection
     @con = Rubeus::Jdbc::DriverManager.connect("jdbc:derby:test_db;create = true", "", "")

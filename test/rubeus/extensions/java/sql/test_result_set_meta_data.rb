@@ -1,10 +1,9 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
+
 require 'test/rubeus/extensions/java/sql/test_sql_helper'
 
 # Test for result_set_meta_data.rb
-class TestResultSetMetaData < Test::Unit::TestCase
+class TestResultSetMetaData < MiniTest::Unit::TestCase
   include TestSqlHelper
 
   def setup

@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
 
 # Test for j_scroll_pane.rb
-class TestJScrollPane < Test::Unit::TestCase
+class TestJScrollPane < MiniTest::Unit::TestCase
   include Rubeus::Swing
 
   # setup method

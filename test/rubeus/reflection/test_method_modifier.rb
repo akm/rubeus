@@ -1,9 +1,8 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
+
 require File.expand_path('../../rubeus_test.jar', File.dirname(__FILE__))
 
-class TestMethodModifier < Test::Unit::TestCase
+class TestMethodModifier < MiniTest::Unit::TestCase
   include Rubeus::Reflection
 
   VariousMethods = jp.rubybizcommons.rubeus.test.reflection.VariousMethods

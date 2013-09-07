@@ -1,9 +1,7 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
 
 # Test for driver_manager.rb
-class TestDriverManager < Test::Unit::TestCase
+class TestDriverManager < MiniTest::Unit::TestCase
   # setup method
   def setup
   end

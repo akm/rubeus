@@ -1,9 +1,7 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
 
 # Test for nestable.rb
-class TestNestable < Test::Unit::TestCase
+class TestNestable < MiniTest::Unit::TestCase
   include Rubeus::Swing
 
   class TestClass

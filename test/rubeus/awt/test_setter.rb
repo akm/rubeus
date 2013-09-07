@@ -1,9 +1,7 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
 
 # Test for setter.rb
-class TestSetter < Test::Unit::TestCase
+class TestSetter < MiniTest::Unit::TestCase
   include Rubeus::Swing
 
   # setup method

@@ -1,9 +1,7 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
 
 # Test for timer.rb
-class TestTimer < Test::Unit::TestCase
+class TestTimer < MiniTest::Unit::TestCase
   include Rubeus::Swing
 
   # setup method

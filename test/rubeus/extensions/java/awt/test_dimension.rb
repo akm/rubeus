@@ -1,9 +1,7 @@
-require 'test/unit'
-require 'rubygems'
-require 'rubeus'
+require 'minitest_helper'
 
 # Test for Rubeus::Extensions::Java::Awt
-class TestDimension < Test::Unit::TestCase
+class TestDimension < MiniTest::Unit::TestCase
   include Rubeus::Awt
 
   # setup method

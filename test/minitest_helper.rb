@@ -14,3 +14,7 @@ def assert_raise(klass)
     assert_instance_of klass, e
   end
 end
+
+def assert_not_nil(obj, msg = nil)
+  assert obj, msg
+end

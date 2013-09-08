@@ -28,5 +28,13 @@ module Rubeus::Extensions::Java::Sql
         dest
       end
     end
+
+    def to_arrays
+      r = []
+      each_array do |row|
+        r << row
+      end
+      r
+    end
   end
 end

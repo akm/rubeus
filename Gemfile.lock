@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubeus (0.1.0-java)
+    rubeus (0.1.1-java)
       activesupport (< 4.0.0)
 
 GEM
@@ -13,7 +13,7 @@ GEM
     i18n (0.6.5)
     jdbc-derby (10.6.2.1-java)
     minitest (5.0.7)
-    multi_json (1.7.9)
+    multi_json (1.8.0)
     rake (0.9.2.2)
     rmaven (0.0.1)
 

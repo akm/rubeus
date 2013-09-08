@@ -4,6 +4,9 @@ require "rubeus/jdbc/column"
 require "rubeus/jdbc/index"
 require "rubeus/jdbc/primary_key"
 require "rubeus/jdbc/foreign_key"
+
+require 'csv'
+
 module Rubeus::Jdbc
   class Table < MetaElement
     include FullyQualifiedNamed
@@ -212,6 +215,47 @@ module Rubeus::Jdbc
       class_def << "end"
       mod.module_eval(class_def)
       mod.const_get(class_name)
+    end
+
+    def quote_value(s)
+      s.nil? ? "null" : s.empty? ? "null" : "'#{remove_quote(s)}'"
+    end
+
+    def remove_quote(s)
+      s.nil? ? "null" : s.empty? ? "null" : s.gsub(/\A[\'\"]|[\'\"]\Z/, '')
+    end
+
+    def import_csv(conn, filepath)
+      raise ArgumentError, "file not readable: #{filepath}" unless File.readable?(filepath)
+
+      filters = columns.map do |c|
+        puts "#{c.name}: #{c.jdbc_type_of_char?.inspect}"
+        c.jdbc_type_of_char? ?
+          method(:quote_value) : method(:remove_quote)
+      end
+
+      # 本来はPreparedStatementを使うべきですが、JDBCオブジェクトへの変換が面倒なので、一旦文字列でやってみます
+      # sql = "INSERT INTO #{name} (%s) VALUES (%s)" % [
+      #   columns.map(&:name).join(","),
+      #   columns.map{|c| "?"}.join(",")
+      # ]
+      # st = conn.prepare_statement(sql);
+
+      base_st = "INSERT INTO #{name} (%s) VALUES" % [
+        columns.map(&:name).join(",")
+      ]
+
+      CSV.foreach(filepath) do |row|
+        unless row.length == columns.length
+          raise "row.length is #{row.length} but it must be #{columns.length}. #{row.inspect} for #{columns.map(&:name).join(',')}"
+        end
+        filtered = row.map.with_index{|v,i| filters[i].call(v.nil? ? nil : v.strip)}
+        sql = "%s (%s)" % [base_st, filtered.join(",")]
+        conn.statement.execute_update(sql)
+      end
+    rescue Exception => e
+      puts "[#{e.class}] #{e.message}"
+      raise e
     end
 
   end

@@ -51,18 +51,28 @@ module Rubeus::Jdbc
       column_name.send(options[:name_case] || :to_s)
     end
 
-    # TYPE_ID_TO_NAMES = Hash[java.sql.Types.constants.each_with_object({}){|name, d| d[ java.sql.Types.const_get(name) ] = name}.sort]
-    TYPE_ID_TO_NAMES = {
-      -16=>:LONGNVARCHAR, -15=>:NCHAR, -9=>:NVARCHAR, -8=>:ROWID,
-      -7=>:BIT, -6=>:TINYINT, -5=>:BIGINT, -4=>:LONGVARBINARY, -3=>:VARBINARY, -2=>:BINARY, -1=>:LONGVARCHAR,
-      0=>:NULL, 1=>:CHAR, 2=>:NUMERIC, 3=>:DECIMAL, 4=>:INTEGER, 5=>:SMALLINT, 6=>:FLOAT, 7=>:REAL, 8=>:DOUBLE, 12=>:VARCHAR, 16=>:BOOLEAN,
-      70=>:DATALINK, 91=>:DATE, 92=>:TIME, 93=>:TIMESTAMP,
-      1111=>:OTHER, 2000=>:JAVA_OBJECT, 2001=>:DISTINCT, 2002=>:STRUCT, 2003=>:ARRAY,
-      2004=>:BLOB, 2005=>:CLOB, 2006=>:REF, 2009=>:SQLXML, 2011=>:NCLOB
-    }.freeze
+    type_id_to_names = java.sql.Types.constants.each_with_object({}){|name, d| d[ java.sql.Types.const_get(name) ] = name}
+
+    TYPE_ID_TO_NAMES = Hash[type_id_to_names.sort]
+    # TYPE_ID_TO_NAMES = {
+    #   -16=>:LONGNVARCHAR, -15=>:NCHAR, -9=>:NVARCHAR, -8=>:ROWID,
+    #   -7=>:BIT, -6=>:TINYINT, -5=>:BIGINT, -4=>:LONGVARBINARY, -3=>:VARBINARY, -2=>:BINARY, -1=>:LONGVARCHAR,
+    #   0=>:NULL, 1=>:CHAR, 2=>:NUMERIC, 3=>:DECIMAL, 4=>:INTEGER, 5=>:SMALLINT, 6=>:FLOAT, 7=>:REAL, 8=>:DOUBLE, 12=>:VARCHAR, 16=>:BOOLEAN,
+    #   70=>:DATALINK, 91=>:DATE, 92=>:TIME, 93=>:TIMESTAMP,
+    #   1111=>:OTHER, 2000=>:JAVA_OBJECT, 2001=>:DISTINCT, 2002=>:STRUCT, 2003=>:ARRAY,
+    #   2004=>:BLOB, 2005=>:CLOB, 2006=>:REF, 2009=>:SQLXML, 2011=>:NCLOB
+    # }.freeze
+
+    type_name_to_ids = java.sql.Types.constants.each_with_object({}){|name, d| d[name] = java.sql.Types.const_get(name)}
+
+    CHAR_TYPE_IDS = type_name_to_ids.keys.select{|k| k.to_s =~ /CHAR/i}.map{|k| type_name_to_ids[k]}.freeze
 
     def jdbc_type
       @column_type ||= (TYPE_ID_TO_NAMES[data_type] || type_name || '')
+    end
+
+    def jdbc_type_of_char?
+      CHAR_TYPE_IDS.include?(data_type)
     end
 
     def rails_type
@@ -97,5 +107,6 @@ module Rubeus::Jdbc
       self.column_def.nil? ? nil :
         /^NULL$/i =~ self.column_def.to_s ? nil : self.column_def
     end
+
   end
 end

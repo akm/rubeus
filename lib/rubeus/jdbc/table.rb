@@ -229,7 +229,6 @@ module Rubeus::Jdbc
       raise ArgumentError, "file not readable: #{filepath}" unless File.readable?(filepath)
 
       filters = columns.map do |c|
-        puts "#{c.name}: #{c.jdbc_type_of_char?.inspect}"
         c.jdbc_type_of_char? ?
           method(:quote_value) : method(:remove_quote)
       end

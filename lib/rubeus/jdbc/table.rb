@@ -225,12 +225,39 @@ module Rubeus::Jdbc
       s.nil? ? "null" : s.empty? ? "null" : s.gsub(/\A[\'\"]|[\'\"]\Z/, '')
     end
 
+    def date_quote(s)
+      jdbc_time_string(s, :DATE)
+    end
+    def time_quote(s)
+      jdbc_time_string(s, :TIME)
+    end
+    def timestamp_quote(s)
+      jdbc_time_string(s, :TIMESTAMP)
+    end
+
+    def jdbc_time_string(s, jdbc_type)
+      return "null" if s.nil? || s.empty?
+      t = Time.parse(remove_quote(s)).utc
+      r =
+        case jdbc_type
+        when :DATE then t.strftime("%Y-%m-%d")
+        when :TIME then t.strftime("%H:%M:%S")
+        when :TIMESTAMP then t.strftime("%Y-%m-%d %H:%M:%S.%6N")
+        end
+      quote_value(r)
+    end
+
     def import_csv(conn, filepath)
       raise ArgumentError, "file not readable: #{filepath}" unless File.readable?(filepath)
 
       filters = columns.map do |c|
-        c.jdbc_type_of_char? ?
-          method(:quote_value) : method(:remove_quote)
+        case c.jdbc_type
+        when *Rubeus::Jdbc::Column::CHAR_TYPE_NAMES then method(:quote_value)
+        when :DATE then method(:date_quote)
+        when :TIME then method(:time_quote)
+        when :TIMESTAMP then method(:timestamp_quote)
+        else method(:remove_quote)
+        end
       end
 
       # 本来はPreparedStatementを使うべきですが、JDBCオブジェクトへの変換が面倒なので、一旦文字列でやってみます
@@ -250,6 +277,7 @@ module Rubeus::Jdbc
         end
         filtered = row.map.with_index{|v,i| filters[i].call(v.nil? ? nil : v.strip)}
         sql = "%s (%s)" % [base_st, filtered.join(",")]
+puts sql.inspect
         conn.statement.execute_update(sql)
       end
     rescue Exception => e

@@ -63,9 +63,12 @@ module Rubeus::Jdbc
     #   2004=>:BLOB, 2005=>:CLOB, 2006=>:REF, 2009=>:SQLXML, 2011=>:NCLOB
     # }.freeze
 
+
     type_name_to_ids = java.sql.Types.constants.each_with_object({}){|name, d| d[name] = java.sql.Types.const_get(name)}
 
-    CHAR_TYPE_IDS = type_name_to_ids.keys.select{|k| k.to_s =~ /CHAR/i}.map{|k| type_name_to_ids[k]}.freeze
+    CHAR_TYPE_NAMES = type_name_to_ids.keys.select{|k| k.to_s =~ /CHAR/i}.freeze
+    CHAR_TYPE_IDS = CHAR_TYPE_NAMES.map{|k| type_name_to_ids[k]}.freeze
+    TIME_TYPE_IDS = [:DATE, :TIME, :TIMESTAMP].map{|name| type_name_to_ids[name] }.freeze
 
     def jdbc_type
       @column_type ||= (TYPE_ID_TO_NAMES[data_type] || type_name || '')
@@ -73,6 +76,10 @@ module Rubeus::Jdbc
 
     def jdbc_type_of_char?
       CHAR_TYPE_IDS.include?(data_type)
+    end
+
+    def jdbc_type_of_time?
+      TIME_TYPE_IDS.include?(data_type)
     end
 
     def rails_type

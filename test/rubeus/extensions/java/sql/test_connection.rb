@@ -113,16 +113,24 @@ class TestConnection < MiniTest::Test
     end
   end
 
-  # def test_insert_from_csv_datetime
-  #   @con.statement do |stmt|
-  #     create_table_after_drop("CREATE TABLE DATETIME_TABLE1 (id SMALLINT, date1 DATE, time1 TIME, timestamp1 TIMESTAMP)")
-  #     @con.import_csv(File.expand_path("../test_connection/datetime_table1.csv", __FILE__))
-  #   end
-  #   @con.auto_commit = false
-  #   @con.query("SELECT * FROM DATETIME_TABLE1 ORDER BY ID").to_arrays.should == [
-  #     [1, nil, nil, nil, nil],
-  #     [2, nil, nil, nil, nil],
-  #     [3, ],
-  #   ]
-  # end
+  def test_insert_from_csv_datetime
+    @con.statement do |stmt|
+      create_table_after_drop("CREATE TABLE DATETIME_TABLE1 (id SMALLINT, date1 DATE, time1 TIME, timestamp1 TIMESTAMP)")
+      @con.import_csv(File.expand_path("../test_connection/datetime_table1.csv", __FILE__))
+    end
+    @con.query("SELECT date1,time1,timestamp1 FROM DATETIME_TABLE1 ORDER BY ID") do |q|
+      assert_equal(
+      [
+        [nil, nil, nil],
+        [nil, nil, nil],
+        ['2013-09-05', '08:00:00', '2013-09-05 12:00:00.0'],
+        ['2013-09-04', '23:00:00', '2013-09-05 03:00:00.0'],
+        ['2013-09-05', '08:00:00', '2013-09-05 12:00:00.123456'],
+        ['2013-09-05', '08:00:00', '2013-09-05 12:00:00.0'],
+        ['2013-09-04', '23:00:00', '2013-09-05 03:00:00.0'],
+        ['2013-09-05', '08:00:00', '2013-09-05 12:00:00.123456'],
+      ], q.to_arrays.map{|r| r.map{|c| c.nil? ? nil : c.toString }}
+      )
+    end
+  end
 end

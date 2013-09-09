@@ -64,22 +64,35 @@ class TestConnection < MiniTest::Test
     end
   end
 
-  # def test_insert_from_csv_real
-  #   @con.statement do |stmt|
-  #     create_table_after_drop("CREATE TABLE INTEGER_TABLE1 (id SMALLINT, smallint1 SMALLINT, int1 INTEGER, bigint1 BIGINT)", stmt)
-  #     @con.import_csv(File.expand_path("../test_connection/string_table1.csv", __FILE__), into: "INTEGER_TABLE1")
-  #   end
-  #   @con.query("SELECT * FROM INTEGER_TABLE1 ORDER BY ID") do |q|
-  #     assert_equal([
-  #     [1, nil, nil, nil, nil],
-  #     [2, nil, nil, nil, nil],
-  #     [3, 1.0, 2.0, 3.0, 4.0],
-  #     [4, 1.0, 2.0, 3.0, 4.0],
-  #     [5, 1.0, 2.0, 3.0, 4.0],
-  #     [6, 1.0, 2.0, 3.0, 4.0],
-  #   ], q.to_arrays)
-  #   end
-  # end
+  def test_insert_from_csv_real
+    @con.statement do |stmt|
+      #
+      # The DOUBLE data type is a synonym for the DOUBLE PRECISION data type.
+      # The FLOAT data type is an alias for a REAL or DOUBLE PRECISION data type, depending on the precision you specify.
+      # NUMERIC is a synonym for DECIMAL and behaves the same way
+      create_table_after_drop("CREATE TABLE REAL_TABLE1 (id SMALLINT, decimal1 DECIMAL(5,2), double1 DOUBLE, float1 FLOAT, real1 REAL)", stmt)
+      @con.import_csv(File.expand_path("../test_connection/real_table1.csv", __FILE__), into: "REAL_TABLE1")
+    end
+    @con.query("SELECT * FROM REAL_TABLE1 ORDER BY ID") do |q|
+      expects = [
+        [1, nil, nil, nil, nil],
+        [2, nil, nil, nil, nil],
+        [3, java.math.BigDecimal.new(1.0), 2.0, 3.0, 4.0],
+        [4, java.math.BigDecimal.new(1.0), 2.0, 3.0, 4.0],
+        [5, java.math.BigDecimal.new(1.0), 2.0, 3.0, 4.0],
+        [6, java.math.BigDecimal.new(1.0), 2.0, 3.0, 4.0],
+        [7, java.math.BigDecimal.new(1.0), 2.0, 3.0, 4.0],
+        [8, java.math.BigDecimal.new(1.0), 2.0, 3.0, 4.0],
+      ]
+      actuals = q.to_arrays
+      expects.each.with_index do |expect, idx|
+        assert_equal(
+               expect.map{|ex| ex.respond_to?(:doubleValue) ? ex.doubleValue : ex},
+               actuals[idx].map{|a| a.respond_to?(:doubleValue) ? a.doubleValue : a}
+               )
+      end
+    end
+  end
 
   def test_insert_from_csv_string
     @con.statement do |stmt|

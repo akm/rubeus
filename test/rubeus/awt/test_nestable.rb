@@ -1,7 +1,7 @@
 require 'minitest_helper'
 
 # Test for nestable.rb
-class TestNestable < MiniTest::Unit::TestCase
+class TestNestable < MiniTest::Test
   include Rubeus::Swing
 
   class TestClass
